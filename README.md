@@ -24,7 +24,9 @@ In annex B.
 
 ## get Function.prototype.caller
 
-{ [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }
+Function.prototype.caller is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
+
+The [[Get]] attribute is a built-in function that performs the following steps:
 
 1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
 1. If _ctx_ is **undefined**, return **null**.
@@ -37,12 +39,23 @@ In annex B.
 
 ## get Function.prototype.arguments
 
-{ [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }
+Function.prototype.arguments is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
+
+The following component is added to [ECMAScript Code Execution Contexts](https://tc39.github.io/ecma262/#table-23):
+
+* Arguments: an optional reference to the Arguments object created during [FunctionDeclarationInstantiation](https://tc39.github.io/ecma262/#sec-functiondeclarationinstantiation).
+
+The [FunctionDeclarationInstantiation](https://tc39.github.io/ecma262/#sec-functiondeclarationinstantiation) abstract operation performs the following additional step after Step 22.f:
+
+1. If ! IsLeakableFunction(_func_) is **true**,
+    1. Set the value of the Arguments component of _calleeContext__ to _ao_.
+
+The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
 
 1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
 1. If _ctx_ is **undefined**, return **null**.
-2. Let _envRec_ be the value of the VariableEnvironment component of _ctx_.
-1. Return ! _envRec_.GetBindingValue("arguments", **false**).
+1. Assert: The Arguments component of _ctx_ contains an object.
+1. Return the value of the Arguments component of _ctx_.
 
 
 ## arguments.callee

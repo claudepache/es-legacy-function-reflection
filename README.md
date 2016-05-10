@@ -13,11 +13,11 @@ In annex B.
 1. Return **true**.
 
 
-## GetTopMostExecutionContextIfLeakable(_func_, _realm_) 
+## GetTopMostExecutionContextIfLeakable(_func_, _expectedFuncRealm_) 
 
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. If IsLeakableFunction(_func_) is **false**, throw a **TypeError** exception.
-1. If the value of _func_’s [[Realm]] internal slot is not _realm_, throw a **TypeError** exception.
+1. If the value of _func_’s [[Realm]] internal slot is not _expectedFuncRealm_, throw a **TypeError** exception.
 1. If there is no [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value _func_, return **undefined**.
 1. Return the topmost [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value  _func_.
 

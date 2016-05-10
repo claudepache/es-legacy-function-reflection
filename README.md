@@ -24,7 +24,7 @@ In annex B.
 
 ## get Function.prototype.caller
 
-{ [[Set]]: **undefined**, [[Configurable]]: **true**, [[Enumerable]]: **false** }
+{ [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }
 
 1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
 1. If _ctx_ is **undefined**, return **null**.
@@ -37,7 +37,7 @@ In annex B.
 
 ## get Function.prototype.arguments
 
-{ [[Set]]: **undefined**, [[Configurable]]: **true**, [[Enumerable]]: **false** }
+{ [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }
 
 1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
 1. If _ctx_ is **undefined**, return **null**.
@@ -50,4 +50,4 @@ In annex B.
 Additional steps of the [CreateMappedArgumentsObject](https://tc39.github.io/ecma262/#sec-createmappedargumentsobject) abstract operation.
 
 1. Assert: IsLeakableFunction(_func_) is **true**.
-1. Perform ! DefinePropertyOrThrow(_func_, "callee", PropertyDescriptor{[[Value]]: _func_, [[Writable]]: false [[Enumerable]]: **false**, [[Configurable]]: **false**}).
+1. Perform ! DefinePropertyOrThrow(_func_, "callee", PropertyDescriptor{[[Value]]: _func_, [[Writable]]: **true** [[Enumerable]]: **false**, [[Configurable]]: **true**}).

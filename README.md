@@ -33,7 +33,7 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _ctx_ has no parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack), return **null**.
 1. Let _ctxParent_ be the parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) of _ctx_.
 1. Let _G_ be the value of the Function component of _ctxParent_.
-1. If Type(_G_) is not Null and IsLeakable(_G_) is **false**, throw a **TypeError** exception.
+1. If Type(_G_) is not Null and IsLeakableFunction(_G_) is **false**, throw a **TypeError** exception.
 1. Return _G_.
 
 
@@ -48,7 +48,7 @@ The following component is added to [ECMAScript Code Execution Contexts](https:/
 The [FunctionDeclarationInstantiation](https://tc39.github.io/ecma262/#sec-functiondeclarationinstantiation) abstract operation performs the following additional step after Step 22.f:
 
 1. If ! IsLeakableFunction(_func_) is **true**,
-    1. Set the value of the Arguments component of _calleeContext__ to _ao_.
+    1. Set the value of the Arguments component of _calleeContext_ to _ao_.
 
 The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
 

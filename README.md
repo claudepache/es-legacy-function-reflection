@@ -57,10 +57,3 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. Assert: The Arguments component of _ctx_ contains an object.
 1. Return the value of the Arguments component of _ctx_.
 
-
-## arguments.callee
-
-Additional steps of the [CreateMappedArgumentsObject](https://tc39.github.io/ecma262/#sec-createmappedargumentsobject) abstract operation.
-
-1. Assert: ! IsLeakableFunction(_func_) is **true**.
-1. Perform ! DefinePropertyOrThrow(_func_, "callee", PropertyDescriptor{[[Value]]: _func_, [[Writable]]: **true** [[Enumerable]]: **false**, [[Configurable]]: **true**}).

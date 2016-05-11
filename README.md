@@ -9,7 +9,6 @@ In annex B.
 1. Assert: _func_ is an object that has a [[Call]] internal method.
 1. If _func_ does not have an [[ECMAScriptCode]] internal slot, return **false**.
 1. If the value of _func_’s [[Strict]] internal slot is **true**, return **false**.
-    1. ***Issue: Should it also return false for functions for which IsSimpleParameterList of their [[FormalParameters]] internal slot is false?***
 1. Return **true**.
 
 
@@ -33,7 +32,9 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _ctx_ has no parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack), return **null**.
 1. Let _ctxParent_ be the parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) of _ctx_.
 1. Let _G_ be the value of the Function component of _ctxParent_.
-1. If Type(_G_) is not Null and IsLeakableFunction(_G_) is **false**, throw a **TypeError** exception.
+2. ***Note. Different imlementations have different semantics from this point. See Section Differences between implementations regarding Function#caller below.***
+1. If Type(_G_) is Null or if ! IsLeakableFunction(_G_) is **false**,
+    1. Return **null**.
 1. Return _G_.
 
 
@@ -56,4 +57,43 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. If _ctx_ is **undefined**, return **null**.
 1. Assert: The Arguments component of _ctx_ contains an object.
 1. Return the value of the Arguments component of _ctx_.
+
+
+# Differences between implementations regarding Function#caller
+
+Consider the function:
+
+```js
+function f() {
+    return f.caller
+}
+```
+
+Different browsers produce different results for the following testcases:
+```
+// the caller is a sloppy-mode function
+(function g() { 
+    return f(); 
+})();
+
+// the caller is a strict-mode function
+(function h() { 
+    "use strict";
+    return f(); 
+})();
+
+// the caller is a built-in function
+[1,2].reduce(f);
+```
+
+Here are the results:
+
+----------------------------------------------
+Browser |  caller is sloppy (`g`) | caller is strict (`h`)  |  caller is builtin (`reduce`)
+--------|-----|-------|-------
+Safari 9   | `g()` | throw a TypeError | `reduce()`
+Webkit     | `g()` | `null`            | `reduce()`
+Firefox 46 | `g()` | throw a TypeError | `null`
+Chrome 50  | `g()` | `null`            | `null`
+Edge 13    | `g()` | `null`            | `reduce()`
 

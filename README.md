@@ -70,7 +70,7 @@ function f() {
 ```
 
 Different browsers produce different results for the following testcases:
-```
+```js
 // the caller is a sloppy-mode function
 (function g() { 
     return f(); 

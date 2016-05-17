@@ -4,6 +4,10 @@ Deprecated but needed for web compatibility.
 
 In annex B.
 
+> NOTE. Implementations have historically provided "caller" and "arguments" magic properties on functions. The following semantics allow them to keep backward compatibility with those deprecated feature while limiting the API surface and safely restricting their functionality to non-strict functions.
+
+Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on Function.prototype, according to the specification below.
+
 ## IsLeakableFunction(_func_)
 
 1. Assert: _func_ is an object that has a [[Call]] internal method.
@@ -32,10 +36,15 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _ctx_ has no parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack), return **null**.
 1. Let _ctxParent_ be the parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) of _ctx_.
 1. Let _G_ be the value of the Function component of _ctxParent_.
-2. ***Note. Different imlementations have different semantics from this point. See Section Differences between implementations regarding Function#caller below.***
-1. If Type(_G_) is Null or if ! IsLeakableFunction(_G_) is **false**,
-    1. Return **null**.
-1. Return _G_.
+1. If _G_ is **null**, return **null**.
+1. If _G_ does not have an [[ECMAScriptCode]] internal slot, return **null**.
+1. If the value of _G_’s [[Strict]] slot is **true**, take one of the following step. It is implementation-dependant which one is chosen: ***Note. Maybe we should always choose the TypeError here.***
+    * Throw a **TypeError** exception.
+    * Return **null**.
+1. Assert: ! IsLeakableFunction(_G_) is **true**.
+1. Take one of the following step. It is implementation-dependant which one is chosen:
+    * Return **null**.
+    * Return _G_.
 
 
 ## get Function.prototype.arguments
@@ -56,7 +65,9 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
 1. If _ctx_ is **undefined**, return **null**.
 1. Assert: The Arguments component of _ctx_ contains an object.
-1. Return the value of the Arguments component of _ctx_.
+1. Take one of the following step. It is implementation-dependant which one is chosen:
+    * Return **null**.
+    * Return the value of the Arguments component of _ctx_.
 
 
 # Differences between implementations regarding Function#caller
@@ -88,7 +99,6 @@ Different browsers produce different results for the following testcases:
 
 Here are the results:
 
-----------------------------------------------
 Browser |  caller is sloppy (`g`) | caller is strict (`h`)  |  caller is builtin (`reduce`)
 --------|-----|-------|-------
 Safari 9   | `g()` | throw a TypeError | `reduce()`

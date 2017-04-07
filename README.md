@@ -25,11 +25,11 @@ Implementations must not define a "caller" or an "arguments" own property on any
 
 ## Version 1: Complete specification
 
-In this version, we try to specify quite precisely the legacy behaviour, while allowing implementations to take sometimes a more strict behaviour or to conceal the true answer if they want to.
+In this version, we try to specify quite precisely the legacy behaviour, while allowing implementations to take sometimes a stricter behaviour or to conceal the true answer if they want to.
 
 ### GetTopMostExecutionContext(_func_) 
 
-1. Assert: func is an object that has a [[Call]] internal method.
+1. Assert: _func_ is an object that has a [[Call]] internal method and a [[Strict]] internal slot whose value is **true**.
 1. If there is no [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value _func_, return **undefined**.
 1. Return the topmost [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value  _func_.
 
@@ -49,10 +49,10 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. Let _ctxParent_ be the parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) of _ctx_.
 1. Let _G_ be the value of the Function component of _ctxParent_.
 1. If _G_ is **null**, return **null**.
-1. If ! IsLeakableFunction(_G_, _currentRealm_) is **false**, take one of the following step. It is implementation-dependent which one is chosen: ***TODO: are they cases (e.g., G is a strict functions) where we can impose the TypeError here?***
+1. If ! IsLeakableFunction(_G_, _currentRealm_) is **false**, take one of the following steps. It is implementation-dependent which one is chosen: ***TODO: are they cases (e.g., G is a strict functions) where we can impose the TypeError here?***
     * Throw a **TypeError** exception.
     * Return **null**.
-1. Otherwise, take one of the following step. It is implementation-dependent which one is chosen:
+1. Otherwise, take one of the following steps. It is implementation-dependent which one is chosen:
     * Return **null**.
     * Return _G_.
 
@@ -78,7 +78,7 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. Let _ctx_ be ! GetTopMostExecutionContext(_func_).
 1. If _ctx_ is **undefined**, return **null**.
 1. Assert: The Arguments component of _ctx_ contains an object.
-1. Take one of the following step. It is implementation-dependent which one is chosen:
+1. Take one of the following steps. It is implementation-dependent which one is chosen:
     * Return **null**.
     * Return the value of the Arguments component of _ctx_.
 
@@ -95,7 +95,7 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record](https://tc39.github.io/ecma262/#current-realm).
 1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Take one of the following step. It is implementation-dependent which one is chosen:
+1. Take one of the following steps. It is implementation-dependent which one is chosen:
    * Throw a **TypeError** exception;
    * Return **null**;
    * Return a function _G_ such that ! IsLeakableFunction(_G_, _currentRealm_) is **true**.
@@ -110,7 +110,7 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record](https://tc39.github.io/ecma262/#current-realm).
 1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Take one of the following step. It is implementation-dependent which one is chosen:
+1. Take one of the following steps. It is implementation-dependent which one is chosen:
    * Throw a **TypeError** exception;
    * Return **null**;
    * Return an Arguments object.

@@ -2,52 +2,62 @@
 
 Deprecated but needed for web compatibility.
 
+Goals:
+
+* Web-compatibility is maintained.
+* The functionality is disabled for all but non-strict functions.
+* It is easy to disabled completely the functionality for a given realm.
+
 In annex B.
 
 > NOTE. Implementations have historically provided "caller" and "arguments" magic properties on functions. The following semantics allow them to keep backward compatibility with those deprecated feature while limiting the API surface and safely restricting their functionality to non-strict functions.
 
 Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on Function.prototype, according to the specification below.
 
-## IsLeakableFunction(_func_)
+## IsLeakableFunction(_func_ [, _expectedRealm_ ])
 
 1. Assert: _func_ is an object that has a [[Call]] internal method.
 1. If _func_ does not have an [[ECMAScriptCode]] internal slot, return **false**.
 1. If the value of _func_’s [[Strict]] internal slot is **true**, return **false**.
+1. If _expectedRealm_ was passed, then
+   1. If the value of _func_’s [[Realm]] internal slot is not _expectedRealm_, return **false**.
 1. Return **true**.
 
+## Version 1: Complete specification
 
-## GetTopMostExecutionContextIfLeakable(_func_, _expectedFuncRealm_) 
+In this version, we try to specify quite precisely the legacy behaviour, while allowing implementations to take sometimes a more strict behaviour or to conceal the true answer if they want to.
 
-1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
-1. If ! IsLeakableFunction(_func_) is **false**, throw a **TypeError** exception.
-1. If the value of _func_’s [[Realm]] internal slot is not _expectedFuncRealm_, throw a **TypeError** exception.
+### GetTopMostExecutionContext(_func_) 
+
+1. Assert: func is an object that has a [[Call]] internal method.
 1. If there is no [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value _func_, return **undefined**.
 1. Return the topmost [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value  _func_.
 
 
-## get Function.prototype.caller
+### get Function.prototype.caller
 
 Function.prototype.caller is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
 
 The [[Get]] attribute is a built-in function that performs the following steps:
 
-1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
+1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
+1. Let _currentRealm_ be the [current Realm Record](https://tc39.github.io/ecma262/#current-realm).
+1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. Let _ctx_ be ! GetTopMostExecutionContext(_func_).
 1. If _ctx_ is **undefined**, return **null**.
 1. If _ctx_ has no parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack), return **null**.
 1. Let _ctxParent_ be the parent [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) of _ctx_.
 1. Let _G_ be the value of the Function component of _ctxParent_.
 1. If _G_ is **null**, return **null**.
-1. If _G_ does not have an [[ECMAScriptCode]] internal slot, return **null**.
-1. If the value of _G_’s [[Strict]] slot is **true**, take one of the following step. It is implementation-dependant which one is chosen: ***Note. Maybe we should always choose the TypeError here.***
+1. If ! IsLeakableFunction(_G_, _currentRealm_) is **false**, take one of the following step. It is implementation-dependent which one is chosen: ***TODO: are they cases (e.g., G is a strict functions) where we can impose the TypeError here?***
     * Throw a **TypeError** exception.
     * Return **null**.
-1. Assert: ! IsLeakableFunction(_G_) is **true**.
-1. Take one of the following step. It is implementation-dependant which one is chosen:
+1. Otherwise, take one of the following step. It is implementation-dependent which one is chosen:
     * Return **null**.
     * Return _G_.
 
 
-## get Function.prototype.arguments
+### get Function.prototype.arguments
 
 Function.prototype.arguments is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
 
@@ -62,12 +72,50 @@ The [FunctionDeclarationInstantiation](https://tc39.github.io/ecma262/#sec-funct
 
 The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
 
-1. Let _ctx_ be ? GetTopMostExecutionContextIfLeakable(**this** value, [current Realm Record](https://tc39.github.io/ecma262/#current-realm)).
+1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
+1. Let _currentRealm_ be the [current Realm Record](https://tc39.github.io/ecma262/#current-realm).
+1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. Let _ctx_ be ! GetTopMostExecutionContext(_func_).
 1. If _ctx_ is **undefined**, return **null**.
 1. Assert: The Arguments component of _ctx_ contains an object.
-1. Take one of the following step. It is implementation-dependant which one is chosen:
+1. Take one of the following step. It is implementation-dependent which one is chosen:
     * Return **null**.
     * Return the value of the Arguments component of _ctx_.
+
+## Version 2: Minimal specification
+
+The legacy behaviour is not specified (it is left “implementation-dependent”), but restrictions are set to deactivate the functionality in some cases. 
+
+### get Function.prototype.caller
+
+Function.prototype.caller is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
+
+The [[Get]] attribute is a built-in function that performs the following steps:
+
+1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
+1. Let _currentRealm_ be the [current Realm Record](https://tc39.github.io/ecma262/#current-realm).
+1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. Take one of the following step. It is implementation-dependent which one is chosen:
+   * Throw a **TypeError** exception;
+   * Return **null**;
+   * Return a function _G_ such that ! IsLeakableFunction(_G_, _currentRealm_) is **true**.
+
+
+### get Function.prototype.arguments
+
+Function.prototype.arguments is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
+
+The [[Get]] attribute is a built-in function that performs the following steps:
+
+1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
+1. Let _currentRealm_ be the [current Realm Record](https://tc39.github.io/ecma262/#current-realm).
+1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. Take one of the following step. It is implementation-dependent which one is chosen:
+   * Throw a **TypeError** exception;
+   * Return **null**;
+   * Return an Arguments object.
+
+
 
 
 # Differences between implementations regarding Function#caller

@@ -13,7 +13,7 @@ function log(key, result) {
 function getCaller() { return getCaller.caller }
 
 var listCallers = {
-    strict: '(function () { "use strict"; return getCaller() })()'
+    strict: '(function () { "use strict"; var r = getCaller(); return r })()' // beware PTC!
   , builtin: '[1,2].reduce(getCaller)'    
   , bound: '(function() { return getCaller() }).bind(null)()'
   , nonsimple: '(function (...args) { return getCaller() })()'
@@ -22,6 +22,7 @@ var listCallers = {
   , method: '({ foo() { return getCaller() } }).foo()'
   , getter: '({ get foo() { return getCaller() } }).foo'
   , proxy: '(new Proxy(function () { }, { apply: function() { return getCaller() }}))()'
+  , async: '(async function() { return getCaller() })()'
 }
 
 for (var key in listCallers) {
@@ -32,28 +33,33 @@ for (var key in listCallers) {
     catch (e) {
         result = e
     }
-    log('caller is '+key+':', result)
+    if (result instanceof Promise) {
+        result.then(function (r) { log('caller is '+key+':', r) }, function (e) { log('caller is '+key+':', e) })
+    }
+    else {
+        log('caller is '+key+':', result)
+    }
 }
 
 var listSelfProp = {
-    strict: '(function f() { "use strict"; return f[prop] })()'
-  , builtin: '[1,2].reduce(function() { return [].reduce[prop]; })()'    
-  , bound: 'var f = function() { return f[prop] }.bind(null); f()'
-  , nonsimple: '(function f(...args) { return f[prop] })()'
-  , arrow: 'var f = _ => f[prop]; f()'
-  , generatorFunction: '(function* f() { yield f[prop] })().next().value'
-  , generator: 'var f = (function *() { yield f[prop] })(); f.next().value'
-  , method: 'var _ = { f() { return _.f[prop] } }; _.f()'
-  , getter: 'var _ = { get f() { return Object.getOwnPropertyDescriptor(_, "f").get[prop] } }; _.f'
-  , proxy: 'var f = new Proxy(function () { }, { apply: function() { return f[prop] }}); f()'
+    strict: '(function f() { "use strict"; })()'
+  , builtin: '[].reduce'    
+  , bound: '(function() { }).bind(null)'
+  , nonsimple: '(function f(...args) { })'
+  , arrow: '(_ => _)'
+  , generatorFunction: '(function* () { yield 42; })'
+  , generatorNext: '(function* () { yield 42; })().next'
+  , method: '({ f() {  } }).f'
+  , getter: 'Object.getOwnPropertyDescriptor({ get f() { } }, "f").get'
+  , proxy: 'new Proxy(function () { }, { })'
+  , async: '(async function() { })'
 }
 
 ;['caller', 'arguments'].forEach(function (prop) {
     for (var key in listSelfProp) {
         var result
-        var _, f
         try {
-            result = eval(listSelfProp[key])
+            result = eval(listSelfProp[key])[prop]
         }
         catch (e) {
             result = e

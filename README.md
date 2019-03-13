@@ -29,7 +29,7 @@ In this version, we try to specify quite precisely the legacy behaviour, while a
 
 ### GetTopMostExecutionContext(_func_) 
 
-1. Assert: _func_ is an object that has a [[Call]] internal method and a [[Strict]] internal slot whose value is **true**.
+1. Assert: _func_ is an [ECMAScript function object](https://tc39.github.io/ecma262/#sec-ecmascript-function-objects) whose [[Strict]] internal slot holds the value **false**.
 1. If there is no [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value _func_, return **undefined**.
 1. Return the topmost [execution context](https://tc39.github.io/ecma262/#sec-execution-contexts) in the [execution context stack](https://tc39.github.io/ecma262/#execution-context-stack) whose Function component has value  _func_.
 

@@ -63,12 +63,11 @@ Function.prototype.arguments is an accessor property with attributes { [[Set]]: 
 
 The following component is added to [ECMAScript Code Execution Contexts](https://tc39.github.io/ecma262/#table-23):
 
-* Arguments: an optional reference to the Arguments object created during [FunctionDeclarationInstantiation](https://tc39.github.io/ecma262/#sec-functiondeclarationinstantiation).
+* ArgumentsList: the List of arguments with which the relevant function was called.
 
-The [FunctionDeclarationInstantiation](https://tc39.github.io/ecma262/#sec-functiondeclarationinstantiation) abstract operation performs the following additional step after Step 22.f:
+The [PrepareForOrdinaryCall](https://tc39.github.io/ecma262/#sec-prepareforordinarycall) abstract operation takes (and is called with) an additional argument, _argumentsList_, and sets it to the ArgumentsList component of the newly created _calleeContext_. (This step is needed only when ! IsLeakableFunction(_F_) is **true**.)
 
-1. If ! IsLeakableFunction(_func_) is **true**,
-    1. Set the value of the Arguments component of _calleeContext_ to ! [CreateUnmappedArgumentsObject](_argumentsList_).
+The [CreateUnmappedArgumentsObject] abstract operation takes an optional second argument, _func_. When it is provided, the callee property of the created Arguments object is set as a data property that references _func_, akin to [CreateMappedArgumentsObject].
 
 The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
 
@@ -77,8 +76,8 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! GetTopMostExecutionContext(_func_).
 1. If _ctx_ is **undefined**, return **null**.
-1. Assert: The Arguments component of _ctx_ contains an object.
-1. Return the value of the Arguments component of _ctx_.
+1. Let _argumentsList_ the value of the ArgumentsList component of _ctx_.
+1. Return ! CreateUnmappedArgumentsObject(_argumentsList_, _func_).
 
 
 
@@ -98,4 +97,5 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 [execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts
 [execution context stack]: https://tc39.github.io/ecma262/#execution-context-stack
 [CreateUnmappedArgumentsObject]: https://tc39.github.io/ecma262/#sec-createunmappedargumentsobject
+[CreateMappedArgumentsObject]: https://tc39.github.io/ecma262/#sec-createmappedargumentsobject
 [Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1

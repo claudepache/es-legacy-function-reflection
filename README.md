@@ -6,8 +6,8 @@ Goals:
 
 * Web-compatibility is maintained.
 * The functionality is disabled for (at least) all but non-strict functions.    
-* Cross-realm leakages are forbidden.
-* It is easy to disabled completely the functionality for a given realm.
+* Cross-realm leakages are prevented.
+* It is easy to completely remove the functionality for a given realm.
 
 
 In annex B.
@@ -55,13 +55,16 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _G_.[[FunctionKind]] is not **"normal"**, throw a **TypeError** exception.
 1. Return _G_.
 
-## Additional component of execution contexts:
+## Additional component of execution contexts
 
 The following component is added to [execution context]s:
 
-* ArgumentsList: the List of arguments with which the relevant function was called.
+* ArgumentsList: optionally, the List of arguments with which the relevant function was called.
 
-The [PrepareForOrdinaryCall](https://tc39.github.io/ecma262/#sec-prepareforordinarycall) abstract operation takes – and is called with – an additional argument, _argumentsList_, and sets it to the ArgumentsList component of the newly created _calleeContext_. (This step is needed only when ! IsLeakableFunction(_F_) is **true**.)
+The [[[Call]] internal method of ECMAScript function objects](https://tc39.github.io/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) takes the following additional step after Step 4:
+
+1. If ! IsLeakableFunction(_F_) is **true**, then
+    1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
 
 ## RecreateArgumentsObjectFromExecutionContext(_ctx_)
 

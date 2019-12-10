@@ -7,6 +7,10 @@
 * Main author: Claude Pache ([@claudepache](https://github.com/claudepache))
 * Champion: Mark S. Miller ([@erights](https://github.com/erights))
 
+## Previous discussion
+
+* [tc39/ecma262#562](https://github.com/tc39/ecma262/issues/562)
+
 ## Introduction
 
 Deprecated (as it breaks encapsulation provided by functions), but needed for web compatibility.
@@ -17,7 +21,6 @@ Goals:
 * The functionality is disabled for (at least) all but non-strict functions.    
 * Cross-realm leakages are prevented.
 * It is easy to completely remove the functionality for a given realm.
-
 
 In annex B.
 

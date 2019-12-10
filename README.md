@@ -1,5 +1,14 @@
 # Legacy reflection features for functions in JavaScript
 
+## Status
+
+[ECMAScript proposal](https://github.com/tc39/proposals) at stage 0 of the process.
+
+* Main author: Claude Pache ([@claudepache](https://github.com/claudepache))
+* Champion: Mark S. Miller ([@erights](https://github.com/erights))
+
+## Introduction
+
 Deprecated (as it breaks encapsulation provided by functions), but needed for web compatibility.
 
 Goals:
@@ -131,3 +140,4 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 [%ObjectPrototype%]: https://tc39.github.io/ecma262/#sec-properties-of-the-object-prototype-object
 [%ThrowTypeError%]: https://tc39.github.io/ecma262/#sec-%throwtypeerror%
 [Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1
+

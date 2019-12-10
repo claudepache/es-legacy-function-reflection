@@ -29,14 +29,13 @@ In annex B.
 Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on Function.prototype, according to the specification below.
 
 ## IsLeakableFunction(_func_ [, _expectedRealm_])
-
 1. Assert: _func_ is an object that has a [[Call]] internal method.
 1. If _func_ is not an [ECMAScript function object], return **false**.
 1. If _expectedRealm_ was passed, then
     1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
-1. If _func_.[[Strict]] is not **false**, return **false**.
-1. If _func_.[[FunctionKind]] is not **"normal"**, return **false**.
-1. If _func_ does not have a [[Construct]] internal method, return **false**.
+1. If _func_.[[Strict]] is **true**, return **false**.
+1. If _func_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, return **false**. — NOTE. This condition targets generators and async functions.
+1. If _func_ does not have a [[Construct]] internal method, return **false**. — NOTE. This condition targets getters, setters and methods in object literals.
 1. Return **true**.
 
 
@@ -63,8 +62,8 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _G_ is **null**, return **null**.
 1. If _G_ is not an [ECMAScript function object], return **null**.
 1. If _G_.[[Realm]] is not _currentRealm_, return **null**.
-1. If _G_.[[Strict]] is not **false**, throw a **TypeError** exception.
-1. If _G_.[[FunctionKind]] is not **"normal"**, throw a **TypeError** exception.
+1. If _G_.[[Strict]] is **true**, throw a **TypeError** exception.
+1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, throw a **TypeError** exception. — NOTE: This condition targets generators and async functions. At the time of writing, JSC throws a TypeError here.
 1. Return _G_.
 
 ## Additional component of execution contexts

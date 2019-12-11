@@ -63,7 +63,7 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _G_ is not an [ECMAScript function object], return **null**.
 1. If _G_.[[Realm]] is not _currentRealm_, return **null**.
 1. If _G_.[[Strict]] is **true**, throw a **TypeError** exception.
-1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, throw a **TypeError** exception. — NOTE: This condition targets generators and async functions. At the time of writing, JSC throws a TypeError here.
+1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, throw a **TypeError** exception. — NOTE: This condition targets generators and async functions.
 1. Return _G_.
 
 ## Additional component of execution contexts
@@ -118,13 +118,15 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 
 
 
-# Differences between this spec and current implementations in mainstream browsers
+## Differences between this spec and current implementations in mainstream browsers
+
+Details are found on [analysis.md](analysis.md). Here is a summary:
 
 * Function#caller and Function#arguments are specced as deletable accessors on Function.prototype. That matches what Firefox does; at the time of writing other browsers define them as “magic” immutable data properties on individual function objects.
 * The spec prevents cross-realm leakages. Implementations don’t.
-* The set of functions for which .caller and .arguments is enabled in the spec is the intersection of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.
-* The set of functions which may be returned by .caller in the spec is the intersection of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.
-* The set of functions for which a TypeError is thrown when it is about to be returned by .caller is the union of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.
+* The set of functions for which .caller and .arguments is enabled in the spec is the intersection of the sets of such functions in individual mainstream browsers.
+* The set of functions which may be returned by .caller in the spec is the intersection of the sets of such functions in individual mainstream browsers.
+* The set of functions for which a TypeError is thrown when it is about to be returned by .caller is the union of the sets of such functions in individual mainstream browsers.
 
 
 [IsLeakableFunction]: #isleakablefunctionfunc--expectedrealm

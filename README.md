@@ -121,7 +121,7 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 # Differences between this spec and current implementations in mainstream browsers
 
 * Function#caller and Function#arguments are specced as deletable accessors on Function.prototype. That matches what Firefox does; at the time of writing other browsers define them as “magic” immutable data properties on individual function objects.
-* The spec prevents any cross-realm leakage. It is currently not tested what implementations do.
+* The spec prevents cross-realm leakages. Implementations don’t.
 * The set of functions for which .caller and .arguments is enabled in the spec is the intersection of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.
 * The set of functions which may be returned by .caller in the spec is the intersection of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.
 * The set of functions for which a TypeError is thrown when it is about to be returned by .caller is the union of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.

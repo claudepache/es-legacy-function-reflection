@@ -2,7 +2,7 @@ This documents presents the result of the author’s reverse engineering of Func
 in mainstream browsers.
 
 Most of the results have been obtained through the tests published on
-[simple-tests.js](https://github.com/claudepache/es-legacy-function-reflection/blob/master/simple-tests.js).
+[simple-tests.js](simple-tests.js).
 The missing ones (most notably cross-realm interactions and the returned value of `.arguments`) are left as exercise to the reader.
 (For cross-realm stuff, the author didn’t dare publish the horrible hack he has resorted to in order to obtain a foreign Realm. 🤪)
 

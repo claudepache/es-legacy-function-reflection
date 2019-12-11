@@ -35,7 +35,7 @@ Implementations must not define a "caller" or an "arguments" own property on any
     1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
 1. If _func_.[[Strict]] is **true**, return **false**.
 1. If _func_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, return **false**. — NOTE. This condition targets generators and async functions.
-1. If _func_ does not have a [[Construct]] internal method, return **false**. — NOTE. This condition targets getters, setters and methods in object literals.
+1. If _func_ does not have a [[Construct]] internal method, return **false**. — NOTE. This condition targets getters, setters and methods in object literals, as well as arrow functions.
 1. Return **true**.
 
 

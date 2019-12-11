@@ -124,7 +124,6 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 
 * Function#caller and Function#arguments are specced as deletable accessors on Function.prototype. That matches what Firefox does; at the time of writing other browsers define them as “magic” immutable data properties on individual function objects.
 * The spec prevents cross-realm leakages. Implementations don’t.
-* The set of functions for which .caller and .arguments is enabled in the spec is the intersection of the sets of such functions in individual mainstream browsers.
 * The set of functions which may be returned by .caller in the spec is the intersection of the sets of such functions in individual mainstream browsers.
 * The set of functions for which a TypeError is thrown when it is about to be returned by .caller is the union of the sets of such functions in individual mainstream browsers.
 

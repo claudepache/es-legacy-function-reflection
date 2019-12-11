@@ -53,8 +53,8 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
-1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _ctx_ be ! GetTopMostExecutionContext(_func_).
+1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
 1. If _ctx_ is **undefined**, return **null**.
 1. If _ctx_ has no parent [execution context] in the [execution context stack], return **null**.
 1. Let _ctxParent_ be the parent [execution context] of _ctx_.
@@ -74,14 +74,14 @@ The following component is added to [execution context]s:
 
 The [[[Call]] internal method of ECMAScript function objects](https://tc39.github.io/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) takes the following additional step after Step 4:
 
-1. If ! IsLeakableFunction(_F_) is **true**, then
+1. If ! [IsLeakableFunction]\(_F_) is **true**, then
     1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
 
 ## RecreateArgumentsObjectFromExecutionContext(_ctx_)
 
 1. Assert: _ctx_ is an [execution context].
 1. Let _func_ be the value of the Function component of _ctx_.
-1. Assert: ! IsLeakableFunction(_func_) is **true**.
+1. Assert: ! [IsLeakableFunction]\(_func_) is **true**.
 1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
 1. Assert: _argumentsList_ is a [List] of ECMAScript values.
 1. Let _len_ be the number of elements in _argumentsList_.
@@ -111,10 +111,10 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
-1. If ! IsLeakableFunction(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _ctx_ be ! GetTopMostExecutionContext(_func_).
+1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
 1. If _ctx_ is **undefined**, return **null**.
-1. Return ! RecreateArgumentsObjectFromExecutionContext(_ctx_).
+1. Return ! [RecreateArgumentsObjectFromExecutionContext]\(_ctx_).
 
 
 
@@ -127,8 +127,9 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 * The set of functions for which a TypeError is thrown when it is about to be returned by .caller is the union of the sets of such functions in individual mainstream browsers. See [Issue #1] for details.
 
 
-
-
+[IsLeakableFunction]: #isleakablefunctionfunc--expectedrealm
+[GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc
+[RecreateArgumentsObjectFromExecutionContext]: #recreateargumentsobjectfromexecutioncontextctx
 [current Realm Record]: https://tc39.github.io/ecma262/#current-realm
 [ECMAScript function object]: https://tc39.github.io/ecma262/#sec-ecmascript-function-objects
 [execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts

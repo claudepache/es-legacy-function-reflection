@@ -42,7 +42,7 @@ for (var key in listCallers) {
 }
 
 var listSelfProp = {
-    strict: '(function f() { "use strict"; })()'
+    strict: '(function f() { "use strict"; })'
   , builtin: '[].reduce'    
   , bound: '(function() { }).bind(null)'
   , nonsimple: '(function f(...args) { })'

@@ -1,5 +1,5 @@
 This documents presents the result of the author’s reverse engineering of Function#caller and Function#arguments
-in mainstream browsers.
+in latest versions of Firefox, Chrome, Safari and Edge.
 
 Most of the results have been obtained through the tests published on
 [simple-tests.js](simple-tests.js).
@@ -56,9 +56,11 @@ cross-realm       | ✔︎          | N/A       | N/A       | N/A     | 💥
 ## Value returned by .arguments
 
 When queried on non-censored functions, all implementations return either null (when the function is not in the stack frame),
-or an Arguments object reflecting the actual arguments passed to the function call.
+or an Arguments object reflecting the actual arguments passed during the function call.
 This object is distinct from the one available through the `arguments` binding available inside the function, and
-modifications made on that `arguments` binding are not reflected on the returned object.
+modifications made on that `arguments` binding are not reflected on the returned object. Even, every access to the .arguments property yields a distinct object (so that `(function f() { return f.arguments === f.arguments })()` returns `false`).
+
+In all tested implementations, whether the .caller property of the Arguments object produced by .arguments is poisoned or not, matches whether the same condition holds on the object available through the `arguments` binding inside the function. (According to the spec, that should happens when the parameter list is non-simple, but not all implementations observe that.)
 
 
 ## Value returned by .caller per type of the actual caller

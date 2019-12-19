@@ -72,7 +72,7 @@ instead either the object they wrap or (for proxies) the corresponding handler p
 ✔︎ = returns the caller (or the caller of the caller, or... when PTC is at work 🤥)  
 ⛔ = returns null  
 💥 = throws a TypeError  
-When the target falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen.
+When the target falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen; except that, in the proposed spec, “cross-realm” is always treated the same way as “non-ECMAScript”.
 
 type of the caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|-----------
@@ -81,6 +81,6 @@ strict            | 💥        | ⛔         | 💥       | 💥      | 💥
 generator/async   | ✔︎         | ✔︎          | 💥        | ✔︎       | 💥
 non-constructor   | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎
 legacy            | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎
-cross-realm       | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ⛔
+cross-realm       | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ⛔ (always)
 
 

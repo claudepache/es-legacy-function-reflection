@@ -34,9 +34,10 @@ Implementations must not define a "caller" or an "arguments" own property on any
 1. If _expectedRealm_ was passed, then
     1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
 1. If _func_.[[Strict]] is **true**, return **false**.
-1. If _func_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, return **false**. — NOTE. This condition targets generators and async functions.
-1. If _func_ does not have a [[Construct]] internal method, return **false**. — NOTE. This condition targets getters, setters and methods in object literals, as well as arrow functions.
+1. If _func_ does not have a [[Construct]] internal method, return **false**.
 1. Return **true**.
+
+> NOTE. The functions for which IsLeakableFunction return true are non-strict functions from the expected Realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
 
 
 ## GetTopMostExecutionContext(_func_) 
@@ -143,5 +144,8 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [%ArrayProto_values%]: https://tc39.github.io/ecma262/#sec-array.prototype.values
 [%ObjectPrototype%]: https://tc39.github.io/ecma262/#sec-properties-of-the-object-prototype-object
 [%ThrowTypeError%]: https://tc39.github.io/ecma262/#sec-%throwtypeerror%
+[FunctionDeclaration]: https://tc39.es/ecma262/#prod-FunctionDeclaration
+[FunctionExpression]: https://tc39.es/ecma262/#prod-FunctionExpression
+[Function constructor]: https://tc39.es/ecma262/#sec-function-constructor
 [Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1
 

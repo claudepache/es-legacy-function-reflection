@@ -11,18 +11,28 @@
 
 * [tc39/ecma262#562](https://github.com/tc39/ecma262/issues/562)
 
-## Introduction
+## Purpose
 
-Deprecated (as it breaks encapsulation provided by functions), but needed for web compatibility.
+This is a proposal for standardising Function#caller and Function#arguments.
 
-Goals:
+Those features are deprecated (as it breaks encapsulation provided by functions), but needed for web compatibility. Therefore, it is proposed to add them in [Annex B] (or whatever will follow from [tc39/ecma262#1595](https://github.com/tc39/ecma262/issues/1595)).
 
-* Web-compatibility is maintained.
-* The functionality is disabled for (at least) all but non-strict functions.    
-* Cross-realm leakages are prevented.
-* It is easy to completely remove the functionality for a given realm.
 
-In annex B.
+## Design principles
+
+* Prevent dangerous or unwise behaviour.
+    * Avoid giving access to objects that are not otherwise accessible. Because of other constraints, this is not mandatory for non-strict functions.
+    * Avoid cross-realm leakages.
+* Deprecate the functionality.
+    * Throwing a TypeError is preferred over returning null, which in turn is preferred over just working.
+    * The functionality may easily be completely removed for a given realm at runtime.
+* Don’t break the web.
+    * Each proposed behaviour ought to be either currently implemented by one or more mainstream browsers, or carefully justified.
+* Avoid work from implementators.
+    * It is carefully tested what implementations currently do, so that they need minimal modifications.
+
+
+# Spec Text
 
 > NOTE. Implementations have historically provided “caller” and “arguments” magic properties on functions. The following semantics allow them to keep backward compatibility with those deprecated features while limiting the API surface and safely restricting their functionality to some class of legacy functions and avoiding any cross-realm leakages.
 
@@ -119,7 +129,7 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 
 
 
-## Differences between this spec and current implementations in mainstream browsers
+# Differences between this spec and current implementations in mainstream browsers
 
 Details are found on [analysis.md](analysis.md). Here is a summary:
 
@@ -147,5 +157,6 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [FunctionDeclaration]: https://tc39.es/ecma262/#prod-FunctionDeclaration
 [FunctionExpression]: https://tc39.es/ecma262/#prod-FunctionExpression
 [Function constructor]: https://tc39.es/ecma262/#sec-function-constructor
+[Annex B]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1
 

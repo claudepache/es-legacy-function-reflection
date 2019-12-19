@@ -41,6 +41,7 @@ All implementations produce the expected result.
 
 ✔︎ = returns null when not in the stack frame  
 💥 = throws a TypeError  
+When the target falls in several categories (e.g. cross-realm legacy), the more severe outcome is chosen.
 
 type of the target| Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|--------
@@ -71,6 +72,7 @@ instead either the object they wrap or (for proxies) the corresponding handler p
 ✔︎ = returns the caller (or the caller of the caller, or... when PTC is at work 🤥)  
 ⛔ = returns null  
 💥 = throws a TypeError  
+When the target falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen.
 
 type of the caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|-----------

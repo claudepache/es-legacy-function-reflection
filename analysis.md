@@ -75,15 +75,16 @@ The value returned (when one is returned) seems to be determined by the executio
 ✔︎ = returns the caller (or the caller of the caller, or... when PTC is at work 🤥)  
 ⛔ = returns null  
 💥 = throws a TypeError  
-When the target falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen; except that, in the proposed spec, “cross-realm” is always treated the same way as “non-ECMAScript”.
+When the target falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen.
 
 type of the caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|-----------
 non-ECMAScript    | ⛔        | ⛔         | ⛔       | ✔︎ 👎    | ⛔
-strict            | 💥        | ⛔         | 💥       | 💥      | 💥
-generator/async   | ✔︎         | ✔︎          | 💥        | ✔︎       | 💥
+strict            | 💥        | ⛔         | 💥       | 💥      | ⛔
+generator/async   | ✔︎         | ✔︎          | 💥        | ✔︎       | ⛔
 non-constructor   | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎
 legacy            | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎
-cross-realm       | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ⛔ (always)
+cross-realm       | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ⛔
 
+In the proposed spec, we purposefully remove any potential way to distinguish between non-ECMAScript functions, strict functions, and cross-realm functions.
 

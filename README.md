@@ -17,7 +17,6 @@ This is a proposal for standardising Function#caller and Function#arguments.
 
 Those features are deprecated (as it breaks encapsulation provided by functions), but needed for web compatibility. Therefore, it is proposed to add them in [Annex B] (or whatever will follow from [tc39/ecma262#1595](https://github.com/tc39/ecma262/issues/1595)).
 
-
 ## Design principles
 
 * Prevent dangerous or unwise behaviour.
@@ -133,6 +132,12 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. Return ! [RecreateArgumentsObjectFromExecutionContext]\(_ctx_).
 
 
+## Modifications of the Forbidden Extensions section
+
+The two items in [Forbidden Extensions] related to the properties “caller” and “arguments” of function objects are replaced with the following one:
+
+* An implementation must not extend any function object with own properties named “caller” or “arguments“, except for the corresponding properties on %FunctionPrototype% that are defined in this specification.
+
 
 # Differences between this spec and current implementations in mainstream browsers
 
@@ -163,4 +168,5 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [Function constructor]: https://tc39.es/ecma262/#sec-function-constructor
 [tail position call]: https://tc39.es/ecma262/#sec-tail-position-calls
 [Annex B]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
+[Forbidden Extensions]: https://tc39.es/ecma262/#sec-forbidden-extensions
 [Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1

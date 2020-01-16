@@ -26,6 +26,7 @@ Those features are deprecated (as it breaks encapsulation provided by functions)
 * Deprecate the functionality.
     * Throwing a TypeError is preferred over returning null, which in turn is preferred over just working.
     * The functionality may easily be completely removed for a given realm at runtime.
+* Avoid making it possible to discriminate between a strict function and a non-ECMAScript function.
 * Don’t break the web.
     * Each proposed behaviour ought to be either currently implemented by one or more mainstream browsers, or carefully justified.
 * Avoid work from implementators.
@@ -73,8 +74,8 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _G_ is **null**, return **null**.
 1. If _G_ is not an [ECMAScript function object], return **null**.
 1. If _G_.[[Realm]] is not _currentRealm_, return **null**.
-1. If _G_.[[Strict]] is **true**, throw a **TypeError** exception.
-1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, throw a **TypeError** exception. — NOTE: This condition targets generators and async functions.
+1. If _G_.[[Strict]] is **true**, return **null**
+1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, return **null**. — NOTE: This condition targets generators and async functions.
 1. Return _G_.
 
 > NOTE. The returned value will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call].
@@ -140,8 +141,7 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 * Function#caller and Function#arguments are specced as deletable accessors on Function.prototype. That matches what Firefox does; at the time of writing other browsers define them as “magic” immutable data properties on individual function objects.
 * The spec prevents cross-realm leakages. Implementations don’t.
 * The set of functions which may be returned by .caller in the spec is the intersection of the sets of such functions in individual mainstream browsers.
-* The set of functions for which a TypeError is thrown when it is about to be returned by .caller is the union of the sets of such functions in individual mainstream browsers.
-
+* The spec does not exhibit distinguishable behaviour when the function which is deemed as “caller” is a non-ECMAScript function or when it is a strict function. Some implementations do.
 
 [IsLeakableFunction]: #isleakablefunctionfunc--expectedrealm
 [GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc

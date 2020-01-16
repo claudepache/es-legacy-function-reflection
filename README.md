@@ -77,6 +77,10 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, throw a **TypeError** exception. — NOTE: This condition targets generators and async functions.
 1. Return _G_.
 
+> NOTE. The returned value will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call].
+
+> NOTE 2. Proxy functions and bound functions are never considered as “caller” for the purpose of this algorithm, because they never appear in the [execution context stack].
+
 ## Additional component of execution contexts
 
 The following component is added to [execution context]s:
@@ -157,6 +161,6 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [FunctionDeclaration]: https://tc39.es/ecma262/#prod-FunctionDeclaration
 [FunctionExpression]: https://tc39.es/ecma262/#prod-FunctionExpression
 [Function constructor]: https://tc39.es/ecma262/#sec-function-constructor
+[tail position call]: https://tc39.es/ecma262/#sec-tail-position-calls
 [Annex B]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1
-

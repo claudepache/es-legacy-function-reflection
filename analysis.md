@@ -1,7 +1,7 @@
 This documents presents the result of the author’s reverse engineering of Function#caller and Function#arguments
 in latest versions of Firefox, Chrome, Safari and Edge.
 
-Most of the results have been obtained through the tests published on
+Many of the results have been obtained through the tests published on
 [simple-tests.js](simple-tests.js).
 The missing ones (most notably cross-realm interactions and the returned value of `.arguments`) are left as exercise to the reader.
 (For cross-realm stuff, the author didn’t dare publish the horrible hack he has resorted to in order to obtain a foreign Realm. 🤪)
@@ -66,8 +66,11 @@ In all tested implementations, whether the .caller property of the Arguments obj
 
 ## Value returned by .caller per type of the actual caller
 
-Note that, by nature, proxies and bound functions are never considered “caller”;
-instead either the object they wrap or (for proxies) the corresponding handler plays that role.
+The value returned (when one is returned) seems to be determined by the execution context stack; i.e., it will be the function attached to the execution context that is just below the topmost execution context corresponding to the target. This can be tested in the following ways:
+
+* it is not the “last caller” of the target when the corresponding invocation has been completed, see: [ecma262#562-comment](https://github.com/tc39/ecma262/issues/562#issuecomment-218605762) for a test;
+* it is not a proxy or a bound function; instead it will be either the object they wrap, or (for proxies) the corresponding handler;
+* the true caller will not be returned when the call has occurred at Proper tail call position (in implementations that support this feature).
 
 ✔︎ = returns the caller (or the caller of the caller, or... when PTC is at work 🤥)  
 ⛔ = returns null  

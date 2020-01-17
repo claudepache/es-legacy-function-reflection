@@ -36,7 +36,7 @@ Those features are deprecated (as it breaks encapsulation provided by functions)
 
 > NOTE. Implementations have historically provided “caller” and “arguments” magic properties on functions. The following semantics allow them to keep backward compatibility with those deprecated features while limiting the API surface and safely restricting their functionality to some class of legacy functions and avoiding any cross-realm leakages.
 
-Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on Function.prototype, according to the specification below.
+Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on [%Function.prototype%], according to the specification below.
 
 ## IsLeakableFunction(_func_ [, _expectedRealm_])
 1. Assert: _func_ is an object that has a [[Call]] internal method.
@@ -99,8 +99,9 @@ The [[[Call]] internal method of ECMAScript function objects](https://tc39.githu
 1. Assert: ! [IsLeakableFunction]\(_func_) is **true**.
 1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
 1. Assert: _argumentsList_ is a [List] of ECMAScript values.
+1. EDITOR’S NOTE: From this point, the algorithm is the same as [CreateUnmappedArgumentsObject], except that the "callee" property is in some circumstances defined as in [CreateMappedArgumentsObject].
 1. Let _len_ be the number of elements in _argumentsList_.
-1. Let _obj_ be [ObjectCreate]\([%ObjectPrototype%], « [[ParameterMap]] »).
+1. Let _obj_ be [ObjectCreate]\([%Object.prototype%], « [[ParameterMap]] »).
 1. Set obj.[[ParameterMap]] to **undefined**.
 1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"length"**, PropertyDescriptor { [[Value]]: _len_, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
 1. Let _index_ be 0.
@@ -108,7 +109,7 @@ The [[[Call]] internal method of ECMAScript function objects](https://tc39.githu
     1. Let _val_ be _argumentsList_[_index_].
     1. Perform ! [CreateDataProperty]\(_obj_, ! ToString(_index_), _val_).
     1. Increase _index_ by 1.
-1. Perform ! [DefinePropertyOrThrow]\(_obj_, @@iterator, PropertyDescriptor { [[Value]]: [%ArrayProto_values%], [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
+1. Perform ! [DefinePropertyOrThrow]\(_obj_, @@iterator, PropertyDescriptor { [[Value]]: [%Array.prototype.values%], [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
 1. Let _simpleParameterList_ be ! IsSimpleParameterList of _func_.[[FormalParameters]].
 1. If _simpleParameterList_ is **false**, then
     1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Get]]: [%ThrowTypeError%], [[Set]]: [%ThrowTypeError%], [[Enumerable]]: **false**, [[Configurable]]: **false** }).
@@ -136,7 +137,7 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 
 The two items in [Forbidden Extensions] related to the properties “caller” and “arguments” of function objects are replaced with the following one:
 
-* An implementation must not extend any function object with own properties named “caller” or “arguments“, except for the corresponding properties on %FunctionPrototype% that are defined in this specification.
+* An implementation must not extend any function object with own properties named “caller” or “arguments“, except for the corresponding properties on [%Function.prototype%] that are defined in this specification.
 
 
 # Differences between this spec and current implementations in mainstream browsers
@@ -157,11 +158,14 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [execution context stack]: https://tc39.github.io/ecma262/#execution-context-stack
 [List]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 [CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty
+[CreateMappedArgumentsObject]: https://tc39.es/ecma262/#sec-createmappedargumentsobject
+[CreateUnmappedArgumentsObject]: https://tc39.es/ecma262/#sec-createunmappedargumentsobject
 [DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
 [ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate
 [ToString]: https://tc39.github.io/ecma262/#sec-tostring
-[%ArrayProto_values%]: https://tc39.github.io/ecma262/#sec-array.prototype.values
-[%ObjectPrototype%]: https://tc39.github.io/ecma262/#sec-properties-of-the-object-prototype-object
+[%Array.prototype.values%]: https://tc39.github.io/ecma262/#sec-array.prototype.values
+[%Function.prototype%]: https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object
+[%Object.prototype%]: https://tc39.github.io/ecma262/#sec-properties-of-the-object-prototype-object
 [%ThrowTypeError%]: https://tc39.github.io/ecma262/#sec-%throwtypeerror%
 [FunctionDeclaration]: https://tc39.es/ecma262/#prod-FunctionDeclaration
 [FunctionExpression]: https://tc39.es/ecma262/#prod-FunctionExpression
@@ -169,4 +173,3 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [tail position call]: https://tc39.es/ecma262/#sec-tail-position-calls
 [Annex B]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [Forbidden Extensions]: https://tc39.es/ecma262/#sec-forbidden-extensions
-[Issue #1]: https://github.com/claudepache/es-legacy-function-reflection/issues/1

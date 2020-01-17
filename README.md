@@ -96,7 +96,7 @@ The [[[Call]] internal method of ECMAScript function objects](https://tc39.githu
 
 The abstract operation [CreateUnmappedArgumentsObject](https://tc39.es/ecma262/#sec-createunmappedargumentsobject) is modified in order to take a second parameter:
 
-**CreateUnmappedArgumentsObject](_argumentsList_, _callee_)**
+**CreateUnmappedArgumentsObject(_argumentsList_, _callee_)**
 
 The existing uses of that abstract operation are modified in order to pass **undefined** as their second argument.
 
@@ -110,7 +110,7 @@ is replaced with:
     1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Get]]: [%ThrowTypeError%], [[Set]]: [%ThrowTypeError%], [[Enumerable]]: **false**, [[Configurable]]: **false** }).
 1. Else,
     1. Assert: _callee_ is a function object.
-    1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Value]]: _func_, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
+    1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Value]]: _callee_, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
 
 
 ## get Function.prototype.arguments
@@ -151,7 +151,7 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 
 [IsLeakableFunction]: #isleakablefunctionfunc--expectedrealm
 [GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc
-[CreateUnmappedArgumentsObject]: #modificationofthecreateunmappedargumentsobjectabstractoperation
+[CreateUnmappedArgumentsObject]: #modification-of-the-createunmappedargumentsobject-abstract-operation
 [current Realm Record]: https://tc39.github.io/ecma262/#current-realm
 [ECMAScript function object]: https://tc39.github.io/ecma262/#sec-ecmascript-function-objects
 [execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts

@@ -128,7 +128,7 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. Let _func_ be the value of the Function component of _ctx_.
 1. Assert: ! [IsLeakableFunction]\(_func_) is **true**.
 1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
-1. If ! [IsSimpleParameterList] of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
+1. If IsSimpleParameterList of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
 1. Else, let _callee_ be **undefined**.
 1. Return [CreateUnmappedArgumentsObject]\(_argumentsList_, _callee_) — where CreateUnmappedArgumentsObject has been patched as above.
 

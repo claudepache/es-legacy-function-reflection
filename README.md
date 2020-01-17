@@ -39,7 +39,7 @@ Those features are deprecated (as it breaks encapsulation provided by functions)
 Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on [%Function.prototype%], according to the specification below.
 
 ## IsLeakableFunction(_func_ [, _expectedRealm_])
-1. Assert: _func_ is an object that has a [[Call]] internal method.
+1. Assert: [IsCallable]\(_func_) is **true**.
 1. If _func_ is not an [ECMAScript function object], return **false**.
 1. If _expectedRealm_ was passed, then
     1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
@@ -52,7 +52,7 @@ Implementations must not define a "caller" or an "arguments" own property on any
 
 ## GetTopMostExecutionContext(_func_) 
 
-1. Assert: _func_ is an object that has a [[Call]] internal method.
+1. Assert: [IsCallable]\(_func_) is **true**.
 1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **undefined**.
 1. Return the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
 
@@ -63,7 +63,7 @@ Function.prototype.caller is an accessor property with attributes { [[Set]]: **u
 The [[Get]] attribute is a built-in function that performs the following steps:
 
 1. Let _func_ be the **this** value.
-1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
+1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
@@ -122,7 +122,7 @@ Function.prototype.arguments is an accessor property with attributes { [[Set]]: 
 The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
 
 1. Let _func_ be the **this** value.
-1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
+1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
@@ -159,6 +159,7 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [List]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 [CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty
 [DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
+[IsCallable]: https://tc39.es/ecma262/#sec-iscallable
 [ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate
 [ToObject]: https://tc39.es/ecma262/#sec-toobject
 [ToString]: https://tc39.github.io/ecma262/#sec-tostring

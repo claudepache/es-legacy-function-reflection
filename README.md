@@ -62,6 +62,7 @@ Function.prototype.caller is an accessor property with attributes { [[Set]]: **u
 
 The [[Get]] attribute is a built-in function that performs the following steps:
 
+1. Let _func_ be the **this** value.
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
@@ -69,13 +70,13 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _ctx_ is **undefined**, return **null**.
 1. If _ctx_ has no parent [execution context] in the [execution context stack], return **null**.
 1. Let _ctxParent_ be the parent [execution context] of _ctx_.
-1. Let _G_ be the value of the Function component of _ctxParent_.
-1. If _G_ is **null**, return **null**.
-1. If _G_ is not an [ECMAScript function object], return **null**.
-1. If _G_.[[Realm]] is not _currentRealm_, return **null**.
-1. If _G_.[[Strict]] is **true**, return **null**
-1. If _G_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, return **null**. — NOTE: This condition targets generators and async functions.
-1. Return _G_.
+1. Let _caller_ be the value of the Function component of _ctxParent_.
+1. If _caller_ is **null**, return **null**.
+1. If _caller_ is not an [ECMAScript function object], return **null**.
+1. If _caller_.[[Realm]] is not _currentRealm_, return **null**.
+1. If _caller_.[[Strict]] is **true**, return **null**
+1. If _caller_.[[ECMAScriptCode]] is not an instance of _FunctionBody_, return **null**. — NOTE: This condition targets generators and async functions.
+1. Return _caller_.
 
 > NOTE. The returned value will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call].
 
@@ -120,6 +121,7 @@ Function.prototype.arguments is an accessor property with attributes { [[Set]]: 
 
 The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
 
+1. Let _func_ be the **this** value.
 1. If Type(_func_) is not Object or if _func_ does not have a [[Call]] internal method, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
@@ -158,6 +160,7 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty
 [DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
 [ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate
+[ToObject]: https://tc39.es/ecma262/#sec-toobject
 [ToString]: https://tc39.github.io/ecma262/#sec-tostring
 [%Array.prototype.values%]: https://tc39.github.io/ecma262/#sec-array.prototype.values
 [%Function.prototype%]: https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object

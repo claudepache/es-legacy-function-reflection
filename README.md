@@ -92,30 +92,25 @@ The [[[Call]] internal method of ECMAScript function objects](https://tc39.githu
 1. If ! [IsLeakableFunction]\(_F_) is **true**, then
     1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
 
-## RecreateArgumentsObjectFromExecutionContext(_ctx_)
+## Modification of the CreateUnmappedArgumentsObject abstract operation
 
-1. Assert: _ctx_ is an [execution context].
-1. Let _func_ be the value of the Function component of _ctx_.
-1. Assert: ! [IsLeakableFunction]\(_func_) is **true**.
-1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
-1. Assert: _argumentsList_ is a [List] of ECMAScript values.
-1. EDITOR’S NOTE: From this point, the algorithm is the same as [CreateUnmappedArgumentsObject], except that the "callee" property is in some circumstances defined as in [CreateMappedArgumentsObject].
-1. Let _len_ be the number of elements in _argumentsList_.
-1. Let _obj_ be [ObjectCreate]\([%Object.prototype%], « [[ParameterMap]] »).
-1. Set obj.[[ParameterMap]] to **undefined**.
-1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"length"**, PropertyDescriptor { [[Value]]: _len_, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
-1. Let _index_ be 0.
-1. Repeat, while _index_ < _len_,
-    1. Let _val_ be _argumentsList_[_index_].
-    1. Perform ! [CreateDataProperty]\(_obj_, ! ToString(_index_), _val_).
-    1. Increase _index_ by 1.
-1. Perform ! [DefinePropertyOrThrow]\(_obj_, @@iterator, PropertyDescriptor { [[Value]]: [%Array.prototype.values%], [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
-1. Let _simpleParameterList_ be ! IsSimpleParameterList of _func_.[[FormalParameters]].
-1. If _simpleParameterList_ is **false**, then
+The abstract operation [CreateUnmappedArgumentsObject](https://tc39.es/ecma262/#sec-createunmappedargumentsobject) is modified in order to take a second parameter:
+
+**CreateUnmappedArgumentsObject](_argumentsList_, _callee_)**
+
+The existing uses of that abstract operation are modified in order to pass **undefined** as their second argument.
+
+The penultimate step of the algorithm:
+
+1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Get]]: [%ThrowTypeError%], [[Set]]: [%ThrowTypeError%], [[Enumerable]]: **false**, [[Configurable]]: **false** }).
+
+is replaced with:
+
+1. If _callee_ is **undefined**, then
     1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Get]]: [%ThrowTypeError%], [[Set]]: [%ThrowTypeError%], [[Enumerable]]: **false**, [[Configurable]]: **false** }).
 1. Else,
+    1. Assert: _callee_ is a function object.
     1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Value]]: _func_, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
-1. Return _obj_.
 
 
 ## get Function.prototype.arguments
@@ -130,7 +125,12 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
 1. If _ctx_ is **undefined**, return **null**.
-1. Return ! [RecreateArgumentsObjectFromExecutionContext]\(_ctx_).
+1. Let _func_ be the value of the Function component of _ctx_.
+1. Assert: ! [IsLeakableFunction]\(_func_) is **true**.
+1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
+1. If ! [IsSimpleParameterList] of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
+1. Else, let _callee_ be **undefined**.
+1. Return [CreateUnmappedArgumentsObject]\(_argumentsList_, _callee_) — where CreateUnmappedArgumentsObject has been patched as above.
 
 
 ## Modifications of the Forbidden Extensions section
@@ -151,15 +151,13 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 
 [IsLeakableFunction]: #isleakablefunctionfunc--expectedrealm
 [GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc
-[RecreateArgumentsObjectFromExecutionContext]: #recreateargumentsobjectfromexecutioncontextctx
+[CreateUnmappedArgumentsObject]: #modificationofthecreateunmappedargumentsobjectabstractoperation
 [current Realm Record]: https://tc39.github.io/ecma262/#current-realm
 [ECMAScript function object]: https://tc39.github.io/ecma262/#sec-ecmascript-function-objects
 [execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts
 [execution context stack]: https://tc39.github.io/ecma262/#execution-context-stack
 [List]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 [CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty
-[CreateMappedArgumentsObject]: https://tc39.es/ecma262/#sec-createmappedargumentsobject
-[CreateUnmappedArgumentsObject]: https://tc39.es/ecma262/#sec-createunmappedargumentsobject
 [DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
 [ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate
 [ToString]: https://tc39.github.io/ecma262/#sec-tostring

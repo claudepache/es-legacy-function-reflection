@@ -125,8 +125,6 @@ The [[Get]] attribute of Function.prototype.arguments is a built-in function tha
 1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
 1. If _ctx_ is **undefined**, return **null**.
-1. Let _func_ be the value of the Function component of _ctx_.
-1. Assert: ! [IsLeakableFunction]\(_func_) is **true**.
 1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
 1. If IsSimpleParameterList of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
 1. Else, let _callee_ be **undefined**.

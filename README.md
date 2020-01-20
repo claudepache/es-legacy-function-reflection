@@ -139,6 +139,10 @@ The two items in [Forbidden Extensions] related to the properties “caller” a
 
 * An implementation must not extend any function object with own properties named “caller” or “arguments“, except for the corresponding properties on [%Function.prototype%] that are defined in this specification.
 
+## Other adjustments
+
+* [CreateIntrinsics] must no longer perform the [AddRestrictedFunctionProperties] on [%Function.prototype%]. The [AddRestrictedFunctionProperties] abstract operation is now obsolete and should be removed.
+* The note in [Section 14.9.1 IsInTailCallPosition](https://tc39.es/ecma262/#sec-isintailposition) shall be updated.
 
 # Differences between this spec and current implementations in mainstream browsers
 
@@ -157,7 +161,9 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 [execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts
 [execution context stack]: https://tc39.github.io/ecma262/#execution-context-stack
 [List]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
+[AddRestrictedFunctionProperties]: https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties
 [CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty
+[CreateIntrinsics]: https://tc39.es/ecma262/#sec-createintrinsics
 [DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
 [IsCallable]: https://tc39.es/ecma262/#sec-iscallable
 [ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate

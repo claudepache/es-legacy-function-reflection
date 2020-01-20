@@ -75,7 +75,7 @@ The [[Get]] attribute is a built-in function that performs the following steps:
 1. If _caller_ is not an [ECMAScript function object], return **null**.
 1. If _caller_.[[Realm]] is not _currentRealm_, return **null**.
 1. If _caller_.[[Strict]] is **true**, return **null**
-1. If _caller_.[[ECMAScriptCode]] is an instance of _GeneratorBody_, _AsyncFunctionBody_ or _AsyncGeneratorBody_, return **null**.
+1. If _caller_.[[ECMAScriptCode]] is a _GeneratorBody_, an _AsyncFunctionBody_, an _AsyncGeneratorBody_ or an _AsyncConciseBody_, return **null**.
 1. Return _caller_.
 
 > NOTE. The returned value will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call].

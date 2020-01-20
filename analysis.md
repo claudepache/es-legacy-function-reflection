@@ -7,12 +7,14 @@ The missing ones (most notably cross-realm interactions and the returned value o
 (For cross-realm stuff, the author didn’t dare publish the horrible hack he has resorted to in order to obtain a foreign Realm. 🤪)
 
 
-## Implementation strategy of .caller and .arguments
+## API surface
 
-* Magic immutable (non-writable, non-configurable) own data properties on individual functions: Chrome 79, Safari 13, Edge 18.
-     That violates the essential invariants of internal methods, because the actual value varies. 👎
-* Deletable accessors on Function.prototype: Firefox 71, proposed spec.
+Function#caller and Function#arguments are implemented as followed:
 
+* Magic immutable (non-writable, non-configurable) own data properties on individual functions: Chrome 79, Safari 13, Edge 18. That violates the essential invariants of internal methods, because the actual value varies. 👎
+* Deletable accessors on Function.prototype: Firefox 71, proposed spec. However Firefox 71 has a custom setter that throws on censored functions and does nothing on non-censored functions; the proposed spec has no setter.
+
+TODO: Document what happens when setting to .caller and .arguments ([Issue #9](https://github.com/claudepache/es-legacy-function-reflection/issues/9)).
 
 
 ## Classification of functions (and non-functions) used in the following sections

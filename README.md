@@ -25,6 +25,8 @@ Those features are deprecated (as it breaks encapsulation provided by functions)
 * Deprecate the functionality.
     * Throwing a TypeError is preferred over returning null, which in turn is preferred over just working.
     * The functionality may easily be completely removed for a given realm at runtime.
+* Make the feature small and self-contained.
+    * The API surface is made as small as possible, and the object internal methods have their default behaviour. 
 * Avoid making it possible to discriminate between a strict function and a non-ECMAScript function.
 * Don’t break the web.
     * Each proposed behaviour ought to be either currently implemented by one or more mainstream browsers, or carefully justified.

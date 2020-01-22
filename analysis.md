@@ -9,12 +9,10 @@ The missing ones (most notably cross-realm interactions and the returned value o
 
 ## API surface
 
-Function#caller and Function#arguments are implemented as followed:
+Function#caller and Function#arguments are implemented as follows:
 
 * Magic immutable (non-writable, non-configurable) own data properties on individual functions: Chrome 79, Safari 13, Edge 18. That violates the essential invariants of internal methods, because the actual value varies. 👎
 * Deletable accessors on Function.prototype: Firefox 71, proposed spec. However Firefox 71 has a custom setter that throws on censored functions and does nothing on non-censored functions; the proposed spec has no setter.
-
-TODO: Document what happens when setting to .caller and .arguments ([Issue #9](https://github.com/claudepache/es-legacy-function-reflection/issues/9)).
 
 
 ## Classification of functions (and non-functions) used in the following sections
@@ -89,4 +87,28 @@ legacy            | ✔︎         | ✔︎          | ✔︎         | ✔︎  
 cross-realm       | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ⛔
 
 In the proposed spec, we purposefully remove any potential way to distinguish between non-ECMAScript functions, strict functions, and cross-realm functions.
+
+## Setting to .caller and .arguments
+
+In all circumstances, the assignments `func.caller = 42` and `func.arguments = 42` have no effect; in some cases, a TypeError is thrown as feedback. The precise behaviour is described by the following table:
+
+uncensored — a function object on which getting .caller or .arguments is permitted  
+censored — a function object for which attempting to get .caller or .arguments throws a TypeError
+
+⛔️ = assignment fails silently  
+💥 = a TypeError is thrown
+
+operation | “own-property”<br>Chrome 79, Safari 13, Edge 18 | “shared-setter”<br>Firefox 71 | “no-setter”<br>Proposed spec
+-------------------------------------|----------------|-----------------|-----------
+uncensored.caller = 42               |  ⛔️  |  ⛔️  |  ⛔️  
+censored.caller = 42                 |  💥  |  💥  |  ⛔️  
+"use strict"; uncensored.caller = 42 |  💥  |  ⛔️  |  💥  
+"use strict"; censored.caller = 42   |  💥  |  💥  |  💥  
+
+“own-property” =  a poisoning mechanism is placed on individual functions.  
+“shared-setter” =  a setter placed on Function.prototype selectively throws depending on the receiver.  
+“no-setter” = an accessor property without setter is placed on Function.prototype.  
+
+The migration from own properties to shared accessor without exotic behaviour implies some trade-off. The proposed spec chooses to rely on the default behaviour of failing assignment in both strict and non-strict mode.
+
 

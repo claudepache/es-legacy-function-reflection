@@ -1,5 +1,7 @@
+# Comparison with implementations in current web browsers
+
 This documents presents the result of the author’s reverse engineering of Function#caller and Function#arguments
-in latest versions of Firefox, Chrome, Safari and Edge.
+in latest (at the time of writing) versions of Firefox, Chrome, Safari and Edge, as well as a comparison with the proposed spec’s semantics.
 
 Many of the results have been obtained through the tests published on
 [simple-tests.js](simple-tests.js).

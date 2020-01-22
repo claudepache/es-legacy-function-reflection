@@ -63,7 +63,7 @@ or an Arguments object reflecting the actual arguments passed during the functio
 This object is distinct from the one available through the `arguments` binding available inside the function, and
 modifications made on that `arguments` binding are not reflected on the returned object. Even, every access to the .arguments property yields a distinct object (so that `(function f() { return f.arguments === f.arguments })()` returns `false`).
 
-In all tested implementations, whether the .caller property of the Arguments object produced by .arguments is poisoned or not, matches whether the same condition holds on the object available through the `arguments` binding inside the function. (According to the ECMA-262 spec, that should happen when the parameter list is non-simple, but not all implementations observe that.)
+In all tested implementations, whether the .callee property of the Arguments object produced by .arguments is poisoned or not, matches whether the same condition holds on the object available through the `arguments` binding inside the function. (According to the ECMA-262 spec, that should happen when the parameter list is non-simple, but not all implementations observe that.)
 
 
 ## Value returned by .caller per type of the purported caller

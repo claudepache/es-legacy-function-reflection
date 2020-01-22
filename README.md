@@ -7,7 +7,7 @@
 * Main author: Claude Pache ([@claudepache](https://github.com/claudepache))
 * Champion: Mark S. Miller ([@erights](https://github.com/erights))
 
-## Previous discussion
+## Discussion thread on the ECMA-262 repo
 
 * [tc39/ecma262#562](https://github.com/tc39/ecma262/issues/562)
 
@@ -34,119 +34,23 @@ Those features are deprecated (as it breaks encapsulation provided by functions)
     * It is carefully tested what implementations currently do, so that they need minimal modifications.
 
 
-# Spec Text
+## The spec
 
-> NOTE. Implementations have historically provided “caller” and “arguments” magic properties on functions. The following semantics allow them to keep backward compatibility with those deprecated features while limiting the API surface and safely restricting their functionality to some class of legacy functions and avoiding any cross-realm leakages.
+The formal spec text is given in [spec.md](spec.md). Here is a summary:
 
-Implementations must not define a "caller" or an "arguments" own property on any individual function. Instead, they are permitted to define them as accessor properties on [%Function.prototype%], according to the specification below.
+* Deletable getters named `caller` and `arguments` are installed on `Function.prototype`. They are restricted to a subcategory of non-strict functions from matching realm; they throw a TypeError when attempted to be used with other functions.
 
-## IsLeakableFunction(_func_ [, _expectedRealm_])
-1. Assert: [IsCallable]\(_func_) is **true**.
-1. If _func_ is not an [ECMAScript function object], return **false**.
-1. If _expectedRealm_ was passed, then
-    1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
-1. If _func_.[[Strict]] is **true**, return **false**.
-1. If _func_ does not have a [[Construct]] internal method, return **false**.
-1. Return **true**.
+* The `caller` getter (when applied to an uncensored function) returns the caller of the last currently active call to the function, based on the execution context stack, but only if the caller is in some subcategory of non-strict function of matching realm. Otherwise **null** is returned.
 
-> NOTE. The functions for which IsLeakableFunction return true are non-strict functions from the expected Realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
+* The `arguments` getter (when applied to an uncensored function) returns an Arguments object reflecting the arguments that were passed during the last currently active call to the function, based on the execution context stack. Otherwise **null** is returned.
+
+* The features above goes in [Annex B], which means that they are required only in web browsers.
+
+* Finally, implementations are not allowed to define any `caller` or `arguments` own properties in any function object outside to what is defined in this specification.
 
 
-## GetTopMostExecutionContext(_func_) 
 
-1. Assert: [IsCallable]\(_func_) is **true**.
-1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **undefined**.
-1. Return the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
-
-## get Function.prototype.caller
-
-Function.prototype.caller is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
-
-The [[Get]] attribute is a built-in function that performs the following steps:
-
-1. Let _func_ be the **this** value.
-1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
-1. Let _currentRealm_ be the [current Realm Record].
-1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
-1. If _ctx_ is **undefined**, return **null**.
-1. If _ctx_ has no parent [execution context] in the [execution context stack], return **null**.
-1. Let _ctxParent_ be the parent [execution context] of _ctx_.
-1. Let _caller_ be the value of the Function component of _ctxParent_.
-1. If _caller_ is **null**, return **null**.
-1. If _caller_ is not an [ECMAScript function object], return **null**.
-1. If _caller_.[[Realm]] is not _currentRealm_, return **null**.
-1. If _caller_.[[Strict]] is **true**, return **null**
-1. If _caller_.[[ECMAScriptCode]] is a _GeneratorBody_, an _AsyncFunctionBody_, an _AsyncGeneratorBody_ or an _AsyncConciseBody_, return **null**.
-1. Return _caller_.
-
-> NOTE. The returned value will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call].
-
-> NOTE 2. Proxy functions and bound functions are never considered as “caller” for the purpose of this algorithm, because they never appear in the [execution context stack].
-
-## Additional component of execution contexts
-
-The following component is added to [execution context]s:
-
-* ArgumentsList: optionally, the List of arguments with which the relevant function was called.
-
-The [[[Call]] internal method of ECMAScript function objects](https://tc39.github.io/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) takes the following additional step after Step 4:
-
-1. If ! [IsLeakableFunction]\(_F_) is **true**, then
-    1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
-
-## Modification of the CreateUnmappedArgumentsObject abstract operation
-
-The abstract operation [CreateUnmappedArgumentsObject](https://tc39.es/ecma262/#sec-createunmappedargumentsobject) is modified in order to take a second parameter:
-
-**CreateUnmappedArgumentsObject(_argumentsList_, _callee_)**
-
-The existing uses of that abstract operation are modified in order to pass **undefined** as their second argument.
-
-The penultimate step of the algorithm:
-
-1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Get]]: [%ThrowTypeError%], [[Set]]: [%ThrowTypeError%], [[Enumerable]]: **false**, [[Configurable]]: **false** }).
-
-is replaced with:
-
-1. If _callee_ is **undefined**, then
-    1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Get]]: [%ThrowTypeError%], [[Set]]: [%ThrowTypeError%], [[Enumerable]]: **false**, [[Configurable]]: **false** }).
-1. Else,
-    1. Assert: _callee_ is a function object.
-    1. Perform ! [DefinePropertyOrThrow]\(_obj_, **"callee"**, PropertyDescriptor { [[Value]]: _callee_, [[Writable]]: **true**, [[Enumerable]]: **false**, [[Configurable]]: **true** }).
-
-
-## get Function.prototype.arguments
-
-Function.prototype.arguments is an accessor property with attributes { [[Set]]: **undefined**, [[Enumerable]]: **false**, [[Configurable]]: **true** }.
-
-
-The [[Get]] attribute of Function.prototype.arguments is a built-in function that performs the following steps:
-
-1. Let _func_ be the **this** value.
-1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
-1. Let _currentRealm_ be the [current Realm Record].
-1. If ! [IsLeakableFunction]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
-1. If _ctx_ is **undefined**, return **null**.
-1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
-1. If IsSimpleParameterList of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
-1. Else, let _callee_ be **undefined**.
-1. Return [CreateUnmappedArgumentsObject]\(_argumentsList_, _callee_) — where CreateUnmappedArgumentsObject has been patched as above.
-
-
-## Modifications of the Forbidden Extensions section
-
-The two items in [Forbidden Extensions] related to the properties “caller” and “arguments” of function objects are replaced with the following one:
-
-* An implementation must not extend any function object with own properties named “caller” or “arguments“, except for the corresponding properties on [%Function.prototype%] that are defined in this specification.
-
-## Other adjustments
-
-* [CreateIntrinsics] must no longer perform the [AddRestrictedFunctionProperties] on [%Function.prototype%]. The [AddRestrictedFunctionProperties] abstract operation is now obsolete and should be removed.
-* The note in [Section 14.9.1 IsInTailCallPosition](https://tc39.es/ecma262/#sec-isintailposition) shall be updated.
-
-# Differences between this spec and current implementations in mainstream browsers
+## Differences between this spec and current implementations in mainstream browsers
 
 Details are found on [analysis.md](analysis.md). Here is a summary:
 
@@ -155,29 +59,5 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 * The set of functions which may be returned by .caller in the spec is the intersection of the sets of such functions in individual mainstream browsers.
 * The spec does not exhibit distinguishable behaviour when the function which is deemed as “caller” is a non-ECMAScript function or when it is a strict function. Some implementations do.
 
-[IsLeakableFunction]: #isleakablefunctionfunc--expectedrealm
-[GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc
-[CreateUnmappedArgumentsObject]: #modification-of-the-createunmappedargumentsobject-abstract-operation
-[current Realm Record]: https://tc39.github.io/ecma262/#current-realm
-[ECMAScript function object]: https://tc39.github.io/ecma262/#sec-ecmascript-function-objects
-[execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts
-[execution context stack]: https://tc39.github.io/ecma262/#execution-context-stack
-[List]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
-[AddRestrictedFunctionProperties]: https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties
-[CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty
-[CreateIntrinsics]: https://tc39.es/ecma262/#sec-createintrinsics
-[DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
-[IsCallable]: https://tc39.es/ecma262/#sec-iscallable
-[ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate
-[ToObject]: https://tc39.es/ecma262/#sec-toobject
-[ToString]: https://tc39.github.io/ecma262/#sec-tostring
-[%Array.prototype.values%]: https://tc39.github.io/ecma262/#sec-array.prototype.values
-[%Function.prototype%]: https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object
-[%Object.prototype%]: https://tc39.github.io/ecma262/#sec-properties-of-the-object-prototype-object
-[%ThrowTypeError%]: https://tc39.github.io/ecma262/#sec-%throwtypeerror%
-[FunctionDeclaration]: https://tc39.es/ecma262/#prod-FunctionDeclaration
-[FunctionExpression]: https://tc39.es/ecma262/#prod-FunctionExpression
-[Function constructor]: https://tc39.es/ecma262/#sec-function-constructor
-[tail position call]: https://tc39.es/ecma262/#sec-tail-position-calls
 [Annex B]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [Forbidden Extensions]: https://tc39.es/ecma262/#sec-forbidden-extensions

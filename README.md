@@ -38,15 +38,15 @@ Those features are deprecated (as it breaks encapsulation provided by functions)
 
 The formal spec text is given in [spec.md](spec.md). Here is a summary:
 
-* Deletable getters named `caller` and `arguments` are installed on `Function.prototype`. They are restricted to a subcategory of non-strict functions from matching realm; they throw a TypeError when attempted to be used with other functions.
+* Two deletable getters named "caller" and "arguments" are installed on Function.prototype. They are restricted in order to work only for a subcategory of non-strict functions from matching realm: a TypeError is thrown when attempting to use them with other functions.
 
-* The `caller` getter (when applied to an uncensored function) returns the caller of the last currently active call to the function, based on the execution context stack, but only if the caller is in some subcategory of non-strict function of matching realm. Otherwise **null** is returned.
+* The "caller" getter (when applied to an uncensored function) returns the caller of the last currently active call to the function, based on the execution context stack, but only if the caller is in some subcategory of non-strict functions of matching realm. Otherwise **null** is returned.
 
-* The `arguments` getter (when applied to an uncensored function) returns an Arguments object reflecting the arguments that were passed during the last currently active call to the function, based on the execution context stack. Otherwise **null** is returned.
+* The "arguments" getter (when applied to an uncensored function) returns an Arguments object reflecting the arguments that were passed during the last currently active call to the function, based on the execution context stack. Otherwise **null** is returned.
 
 * The features above goes in [Annex B], which means that they are required only in web browsers.
 
-* Finally, implementations are not allowed to define any `caller` or `arguments` own properties in any function object outside to what is defined in this specification.
+* Finally, implementations are not allowed to define any "caller" or "arguments" own property on any function object outside to what is defined in this specification.
 
 
 

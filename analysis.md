@@ -40,7 +40,7 @@ All implementations produce the expected result.
 “Non-function” and “cross-realm” make sense only when `caller` and `arguments` are implemented as accessors.
 
 ✔︎ = returns null when not in the stack frame  
-💥 = throws a TypeError  
+💥 = always throws a TypeError  
 When the target falls in several categories (e.g. cross-realm legacy), the more severe outcome is chosen.
 
 type of the target| Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
@@ -61,23 +61,23 @@ or an Arguments object reflecting the actual arguments passed during the functio
 This object is distinct from the one available through the `arguments` binding available inside the function, and
 modifications made on that `arguments` binding are not reflected on the returned object. Even, every access to the .arguments property yields a distinct object (so that `(function f() { return f.arguments === f.arguments })()` returns `false`).
 
-In all tested implementations, whether the .caller property of the Arguments object produced by .arguments is poisoned or not, matches whether the same condition holds on the object available through the `arguments` binding inside the function. (According to the spec, that should happens when the parameter list is non-simple, but not all implementations observe that.)
+In all tested implementations, whether the .caller property of the Arguments object produced by .arguments is poisoned or not, matches whether the same condition holds on the object available through the `arguments` binding inside the function. (According to the ECMA-262 spec, that should happen when the parameter list is non-simple, but not all implementations observe that.)
 
 
-## Value returned by .caller per type of the actual caller
+## Value returned by .caller per type of the purported caller
 
-The value returned (when one is returned) seems to be determined by the execution context stack; i.e., it will be the function attached to the execution context that is just below the topmost execution context corresponding to the target. This can be tested in the following ways:
+The returned value (when one is returned) seems to be determined by the execution context stack; i.e., it will be the function attached to the execution context that is just below the topmost execution context corresponding to the target. This can be tested in the following ways:
 
 * it is not the “last caller” of the target when the corresponding invocation has been completed, see: [ecma262#562-comment](https://github.com/tc39/ecma262/issues/562#issuecomment-218605762) for a test;
-* it is not a proxy or a bound function; instead it will be either the object they wrap, or (for proxies) the corresponding handler;
+* it is never a proxy or a bound function; instead it will be either the object they wrap, or (for proxies) the corresponding handler;
 * the true caller will not be returned when the call has occurred at Proper tail call position (in implementations that support this feature).
 
-✔︎ = returns the caller (or the caller of the caller, or... when PTC is at work 🤥)  
+✔︎ = returns the purported caller (which may be the caller of the caller, or... when PTC is at work 🤥)  
 ⛔ = returns null  
 💥 = throws a TypeError  
-When the target falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen.
+When the purported caller falls in several categories (e.g. strict non-constructor), the more severe outcome is chosen.
 
-type of the caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
+type of the purported caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|-----------
 non-ECMAScript    | ⛔        | ⛔         | ⛔       | ✔︎ 👎    | ⛔
 strict            | 💥        | ⛔         | 💥       | 💥      | ⛔

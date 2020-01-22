@@ -6,9 +6,9 @@ _Unless otherwise specified, the following text goes in [Annex B] (normative-opt
 The following semantics allow them to keep backward compatibility with those deprecated features
 while limiting the API surface and safely restricting their functionality.
 
-## IsAllowedTargetFunctionForCallerAndArguments(_func_ [, _expectedRealm_])
+## IsAllowedReceiverFunctionForCallerAndArguments(_func_ [, _expectedRealm_])
 
-The abstract operation IsAllowedTargetFunctionForCallerAndArguments accepts as arguments a function object _func_ and optionally a realm _expectedRealm_, and takes the following steps:
+The abstract operation IsAllowedReceiverFunctionForCallerAndArguments accepts as arguments a function object _func_ and optionally a realm _expectedRealm_, and takes the following steps:
 
 1. Assert: [IsCallable]\(_func_) is **true**.
 1. If _func_ is not an [ECMAScript function object], return **false**.
@@ -18,7 +18,7 @@ The abstract operation IsAllowedTargetFunctionForCallerAndArguments accepts as a
 1. If _func_ does not have a [[Construct]] internal method, return **false**.
 1. Return **true**.
 
-> NOTE. The functions for which IsAllowedTargetFunctionForCallerAndArguments returns true are non-strict functions from the expected Realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
+> NOTE. The functions for which IsAllowedReceiverFunctionForCallerAndArguments returns true are non-strict functions from the expected Realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
 
 
 ## GetTopMostExecutionContext(_func_) 
@@ -37,7 +37,7 @@ The following component is added to [execution context]s:
 
 The [[[Call]] internal method of ECMAScript function objects](https://tc39.github.io/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) takes the following additional step after Step 4:
 
-1. If [IsAllowedTargetFunctionForCallerAndArguments]\(_F_) is **true**, then
+1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_F_) is **true**, then
     1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
 
 ## Modification of the CreateUnmappedArgumentsObject abstract operation
@@ -68,7 +68,7 @@ Function.prototype.caller is a configurable, non-enumerable accessor property wh
 1. Let _func_ be the **this** value.
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
-1. If [IsAllowedTargetFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
 1. If _ctx_ is **undefined**, return **null**.
 1. If _ctx_ has no parent [execution context] in the [execution context stack], return **null**.
@@ -93,7 +93,7 @@ Function.prototype.arguments is a configurable, non-enumerable accessor property
 1. Let _func_ be the **this** value.
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
-1. If [IsAllowedTargetFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
+1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
 1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
 1. If _ctx_ is **undefined**, return **null**.
 1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
@@ -114,7 +114,7 @@ The two items in [Forbidden Extensions] related to the properties “caller” a
 * The note in [Section 14.9.1 IsInTailCallPosition](https://tc39.es/ecma262/#sec-isintailposition) shall be updated.
 
 
-[IsAllowedTargetFunctionForCallerAndArguments]: #isallowedtargetfunctionforcallerandargumentsfunc--expectedrealm
+[IsAllowedReceiverFunctionForCallerAndArguments]: #isallowedreceiverfunctionforcallerandargumentsfunc--expectedrealm
 [GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc
 [CreateUnmappedArgumentsObject]: #modification-of-the-createunmappedargumentsobject-abstract-operation
 [current Realm Record]: https://tc39.github.io/ecma262/#current-realm

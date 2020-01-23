@@ -100,7 +100,7 @@ censored — a function object for which attempting to get .caller or .arguments
 ⛔️ = assignment fails silently  
 💥 = a TypeError is thrown
 
-operation | “own-property”<br>Chrome 79, Safari 13, Edge 18 | “shared-setter”<br>Firefox 71 | “no-setter”<br>Proposed spec
+operation | “own-property” or<br>“uncensored-shadowing”<br>Chrome 79, Safari 13, Edge 18 | “shared-setter”<br>Firefox 71 | “no-setter”<br>Proposed spec
 -------------------------------------|----------------|-----------------|-----------
 uncensored.caller = 42               |  ⛔️  |  ⛔️  |  ⛔️  
 censored.caller = 42                 |  💥  |  💥  |  ⛔️  
@@ -108,6 +108,7 @@ censored.caller = 42                 |  💥  |  💥  |  ⛔️
 "use strict"; censored.caller = 42   |  💥  |  💥  |  💥  
 
 “own-property” =  a poisoning mechanism is placed on individual functions.  
+“uncensored-shadowing” = a setter that throws unconditionally is placed on Function.prototype, and uncensored functions have their own property that shadows the default setter.  
 “shared-setter” =  a setter placed on Function.prototype selectively throws depending on the receiver.  
 “no-setter” = an accessor property without setter is placed on Function.prototype.  
 

@@ -111,7 +111,7 @@ The two items in [Forbidden Extensions] related to the properties “caller” a
 ## Other adjustments
 
 * [CreateIntrinsics] must no longer perform the [AddRestrictedFunctionProperties] on [%Function.prototype%]. The [AddRestrictedFunctionProperties] abstract operation is now obsolete and should be removed.
-* The note in [Section 14.9.1 IsInTailCallPosition](https://tc39.es/ecma262/#sec-isintailposition) shall be updated.
+* The note in [Section 14.9.1 IsInTailCallPosition](https://tc39.es/ecma262/#sec-isintailposition) shall be updated by replacing the allusion to “a common language extension” with a reference to Function.prototype.caller.
 
 
 [IsAllowedReceiverFunctionForCallerAndArguments]: #isallowedreceiverfunctionforcallerandargumentsfunc--expectedrealm

@@ -81,7 +81,7 @@ Function.prototype.caller is a configurable, non-enumerable accessor property wh
 1. If _caller_.[[ECMAScriptCode]] is a _GeneratorBody_, an _AsyncFunctionBody_, an _AsyncGeneratorBody_ or an _AsyncConciseBody_, return **null**.
 1. Return _caller_.
 
-> NOTE. The purported caller will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call]. In particular, the algorithm will return a false positive when applied to a non-strict function which has been called in tail position by a strict function which has itself been called by a non-strict function.
+> NOTE. The purported caller will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call]. In particular, the algorithm will return a false positive when applied to a non-strict function which has been called in tail position by a strict function which has itself been called by a non-strict function. However, the algorithm will give the correct answer when applied to a non-strict function called by another non-strict function, because [tail position call] is not defined in non-strict mode.
 
 > NOTE 2. Proxy functions and bound functions are never considered as “caller” for the purpose of this algorithm, because they never appear in the [execution context stack].
 

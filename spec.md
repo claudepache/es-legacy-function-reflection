@@ -6,19 +6,18 @@ _Unless otherwise specified, the following text goes in [Annex B] (normative-opt
 The following semantics allow them to keep backward compatibility with those deprecated features
 while limiting the API surface and safely restricting their functionality.
 
-## IsAllowedReceiverFunctionForCallerAndArguments(_func_ [, _expectedRealm_])
+## IsAllowedReceiverFunctionForCallerAndArguments(_func_, _expectedRealm_)
 
-The abstract operation IsAllowedReceiverFunctionForCallerAndArguments accepts as arguments a function object _func_ and optionally a realm _expectedRealm_, and takes the following steps:
+The abstract operation IsAllowedReceiverFunctionForCallerAndArguments accepts as arguments a function object _func_ and a realm _expectedRealm_, and takes the following steps:
 
 1. Assert: [IsCallable]\(_func_) is **true**.
 1. If _func_ is not an [ECMAScript function object], return **false**.
-1. If _expectedRealm_ was passed, then
-    1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
+1. If _func_.[[Realm]] is not _expectedRealm_, return **false**.
 1. If _func_.[[Strict]] is **true**, return **false**.
 1. If _func_ does not have a [[Construct]] internal method, return **false**.
 1. Return **true**.
 
-> NOTE. The functions for which IsAllowedReceiverFunctionForCallerAndArguments returns true are non-strict functions from the expected Realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
+> NOTE. The functions for which IsAllowedReceiverFunctionForCallerAndArguments returns true are non-strict functions from the expected realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
 
 
 ## GetTopMostExecutionContext(_func_) 
@@ -33,12 +32,19 @@ The abstract operation GetTopMostExecutionContext accepts as argument a function
 
 The following component is added to [execution context]s:
 
-* ArgumentsList: optionally, the List of arguments with which the relevant function was called.
+* ArgumentsList: the List of arguments with which the relevant function was called.
 
-The [[[Call]] internal method of ECMAScript function objects](https://tc39.github.io/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist) takes the following additional step after Step 4:
+The [PrepareForOrdinaryCall] abstract operation is modified in order to take a third parameter:
 
-1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_F_) is **true**, then
-    1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
+**PrepareForOrdinaryCall(_F_, _newTarget_, _argumentsList_)**
+
+and takes the following additional step after Step 4:
+
+1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
+
+The two existing uses of PrepareForOrdinaryCall are modified in order to forward the corresponding _argumentsList_ value.
+
+> NOTE: Within ECMA-262, the ArgumentList component is inspected only by Function.prototype.arguments when [IsAllowedReceiverFunctionForCallerAndArguments]\(_F_, current realm) is **true**.
 
 ## Modification of the CreateUnmappedArgumentsObject abstract operation
 
@@ -69,11 +75,11 @@ Function.prototype.caller is a configurable, non-enumerable accessor property wh
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
-1. If _ctx_ is **undefined**, return **null**.
-1. If _ctx_ has no parent [execution context] in the [execution context stack], return **null**.
-1. Let _ctxParent_ be the parent [execution context] of _ctx_.
-1. Let _caller_ be the value of the Function component of _ctxParent_.
+1. Let _funcContext_ be [GetTopMostExecutionContext]\(_func_).
+1. If _funcContext_ is **undefined**, return **null**.
+1. If _funcContext_ has no parent [execution context] in the [execution context stack], return **null**.
+1. Let _callerContext_ be the parent [execution context] of _funcContext_.
+1. Let _caller_ be the Function component of _callerContext_.
 1. If _caller_ is **null**, return **null**.
 1. If _caller_ is not an [ECMAScript function object], return **null**.
 1. If _caller_.[[Realm]] is not _currentRealm_, return **null**.
@@ -94,9 +100,9 @@ Function.prototype.arguments is a configurable, non-enumerable accessor property
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _ctx_ be ! [GetTopMostExecutionContext]\(_func_).
-1. If _ctx_ is **undefined**, return **null**.
-1. Let _argumentsList_ be the value of the ArgumentsList component of _ctx_.
+1. Let _funcContext_ be [GetTopMostExecutionContext]\(_func_).
+1. If _funcContext_ is **undefined**, return **null**.
+1. Let _argumentsList_ be the ArgumentsList component of _funcContext_.
 1. If IsSimpleParameterList of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
 1. Else, let _callee_ be **undefined**.
 1. Return CreateUnmappedArgumentsObject(_argumentsList_, _callee_) — where CreateUnmappedArgumentsObject has been patched [as described above](#modification-of-the-createunmappedargumentsobject-abstract-operation).
@@ -114,7 +120,7 @@ The two items in [Forbidden Extensions] related to the properties “caller” a
 * The note in [Section 14.9.1 IsInTailCallPosition](https://tc39.es/ecma262/#sec-isintailposition) shall be updated by replacing the allusion to “a common language extension” with a reference to Function.prototype.caller.
 
 
-[IsAllowedReceiverFunctionForCallerAndArguments]: #isallowedreceiverfunctionforcallerandargumentsfunc--expectedrealm
+[IsAllowedReceiverFunctionForCallerAndArguments]: #isallowedreceiverfunctionforcallerandargumentsfunc-expectedrealm
 [GetTopMostExecutionContext]: #gettopmostexecutioncontextfunc
 [CreateUnmappedArgumentsObject]: #modification-of-the-createunmappedargumentsobject-abstract-operation
 [current Realm Record]: https://tc39.github.io/ecma262/#current-realm
@@ -128,6 +134,7 @@ The two items in [Forbidden Extensions] related to the properties “caller” a
 [DefinePropertyOrThrow]: https://tc39.github.io/ecma262/#sec-definepropertyorthrow
 [IsCallable]: https://tc39.es/ecma262/#sec-iscallable
 [ObjectCreate]: https://tc39.github.io/ecma262/#sec-objectcreate
+[PrepareForOrdinaryCall]: https://tc39.es/ecma262/#sec-prepareforordinarycall
 [ToObject]: https://tc39.es/ecma262/#sec-toobject
 [ToString]: https://tc39.github.io/ecma262/#sec-tostring
 [%Array.prototype.values%]: https://tc39.github.io/ecma262/#sec-array.prototype.values

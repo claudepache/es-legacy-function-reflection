@@ -21,9 +21,9 @@ The abstract operation IsAllowedReceiverFunctionForCallerAndArguments accepts as
 
 ## Additional component of execution contexts
 
-The following component is added to [execution context]s:
+The following component is added to [ECMAScript code execution context]s:
 
-* ArgumentsList: the List of arguments with which the relevant function was called.
+* ArgumentsList: The List of arguments that has been passed during the function invocation, if this execution context is evaluating the code of a function object. Otherwise, **null**.
 
 The [PrepareForOrdinaryCall] abstract operation is modified in order to take a third parameter:
 
@@ -33,7 +33,9 @@ and takes the following additional step after Step 4:
 
 1. Set the ArgumentsList of _calleeContext_ to _argumentsList_.
 
-The two existing uses of PrepareForOrdinaryCall are modified in order to forward the corresponding _argumentsList_ value.
+(Other algorithms that initialize an ECMAScript code execution context shall set its ArgumentsList component to **null**.)
+
+The two existing uses of PrepareForOrdinaryCall are modified in order to forward their _argumentsList_.
 
 > NOTE: Within ECMA-262, the ArgumentList component is inspected only by Function.prototype.arguments when [IsAllowedReceiverFunctionForCallerAndArguments]\(_F_, current realm) is **true**.
 
@@ -66,16 +68,16 @@ Function.prototype.caller is a configurable, non-enumerable accessor property wh
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **null**.
-1. Let _funcContext_ be the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
+1. If there is no [execution context] in the [execution context stack] whose Function component is _func_, return **null**.
+1. Let _funcContext_ be the top-most [execution context] in the [execution context stack] whose Function component is  _func_.
 1. If _funcContext_ has no parent [execution context] in the [execution context stack], return **null**.
 1. Let _callerContext_ be the parent [execution context] of _funcContext_.
 1. Let _caller_ be the Function component of _callerContext_.
 1. If _caller_ is **null**, return **null**.
 1. If _caller_ is not an [ECMAScript function object], return **null**.
 1. If _caller_.[[Realm]] is not _currentRealm_, return **null**.
-1. If _caller_.[[Strict]] is **true**, return **null**
-1. If _caller_.[[ECMAScriptCode]] is a _GeneratorBody_, an _AsyncFunctionBody_, an _AsyncGeneratorBody_ or an _AsyncConciseBody_, return **null**.
+1. If _caller_.[[Strict]] is **true**, return **null**.
+1. If _caller_.[[ECMAScriptCode]] is a _GeneratorBody_, an _AsyncFunctionBody_, an _AsyncGeneratorBody_, or an _AsyncConciseBody_, return **null**.
 1. Return _caller_.
 
 > NOTE. The purported caller will not be the real caller if its corresponding [execution context] has been removed from the [execution context stack] as a result of a [tail position call]. In particular, the algorithm will return a false positive when applied to a non-strict function which has been called in tail position by a strict function which has itself been called by a non-strict function. However, the algorithm will give the correct answer when applied to a non-strict function called by another non-strict function, because [tail position call] is not defined in non-strict mode.
@@ -91,8 +93,8 @@ Function.prototype.arguments is a configurable, non-enumerable accessor property
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **null**.
-1. Let _funcContext_ be the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
+1. If there is no [execution context] in the [execution context stack] whose Function component is _func_, return **null**.
+1. Let _funcContext_ be the top-most [execution context] in the [execution context stack] whose Function component is  _func_.
 1. Let _argumentsList_ be the ArgumentsList component of _funcContext_.
 1. If IsSimpleParameterList of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
 1. Else, let _callee_ be **undefined**.
@@ -118,6 +120,7 @@ The two items in [Forbidden Extensions] related to the properties “caller” a
 [ECMAScript function object]: https://tc39.github.io/ecma262/#sec-ecmascript-function-objects
 [execution context]: https://tc39.github.io/ecma262/#sec-execution-contexts
 [execution context stack]: https://tc39.github.io/ecma262/#execution-context-stack
+[ECMAScript code execution context]: https://tc39.es/ecma262/#table-23
 [List]: https://tc39.github.io/ecma262/#sec-list-and-record-specification-type
 [AddRestrictedFunctionProperties]: https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties
 [CreateDataProperty]: https://tc39.github.io/ecma262/#sec-createdataproperty

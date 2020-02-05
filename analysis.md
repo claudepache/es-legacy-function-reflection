@@ -59,7 +59,7 @@ cross-realm       | ✔︎          | N/A       | N/A       | N/A     | 💥
 ## Value returned by .arguments
 
 When queried on non-censored functions, all implementations return either null (when the function is not in the stack frame),
-or an Arguments object reflecting the actual arguments passed during the function call.
+or an Arguments object reflecting the actual arguments passed during the function call or constructor invocation.
 This object is distinct from the one available through the `arguments` binding available inside the function, and
 modifications made on that `arguments` binding are not reflected on the returned object. Even, every access to the .arguments property yields a distinct object (so that `(function f() { return f.arguments === f.arguments })()` returns `false`).
 
@@ -73,6 +73,8 @@ The returned value (when one is returned) seems to be determined by the executio
 * it is not the “last caller” of the target when the corresponding invocation has been completed, see: [ecma262#562-comment](https://github.com/tc39/ecma262/issues/562#issuecomment-218605762) for a test;
 * it is never a proxy or a bound function; instead it will be either the object they wrap, or (for proxies) the corresponding handler;
 * the true caller will not be returned when the call has occurred at Proper tail call position (in implementations that support this feature).
+
+Also, the result is independant on whether the function object has been invoked as plain function or as constructor.
 
 ✔︎ = returns the purported caller (which may be the caller of the caller, or... when PTC is at work 🤥)  
 ⛔ = returns null  

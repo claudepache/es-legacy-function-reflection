@@ -19,15 +19,6 @@ The abstract operation IsAllowedReceiverFunctionForCallerAndArguments accepts as
 
 > NOTE. The functions for which IsAllowedReceiverFunctionForCallerAndArguments returns true are non-strict functions from the expected realm that were created with _[FunctionDeclaration]_ or _[FunctionExpression]_ syntax or using the [Function constructor].
 
-
-## GetTopMostExecutionContext(_func_) 
-
-The abstract operation GetTopMostExecutionContext accepts as argument a function object _func_, and takes the following steps:
-
-1. Assert: [IsCallable]\(_func_) is **true**.
-1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **undefined**.
-1. Return the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
-
 ## Additional component of execution contexts
 
 The following component is added to [execution context]s:
@@ -75,8 +66,8 @@ Function.prototype.caller is a configurable, non-enumerable accessor property wh
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _funcContext_ be [GetTopMostExecutionContext]\(_func_).
-1. If _funcContext_ is **undefined**, return **null**.
+1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **null**.
+1. Let _funcContext_ be the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
 1. If _funcContext_ has no parent [execution context] in the [execution context stack], return **null**.
 1. Let _callerContext_ be the parent [execution context] of _funcContext_.
 1. Let _caller_ be the Function component of _callerContext_.
@@ -100,8 +91,8 @@ Function.prototype.arguments is a configurable, non-enumerable accessor property
 1. If [IsCallable]\(_func_) is **false**, throw a **TypeError** exception.
 1. Let _currentRealm_ be the [current Realm Record].
 1. If [IsAllowedReceiverFunctionForCallerAndArguments]\(_func_, _currentRealm_) is **false**, throw a **TypeError** exception.
-1. Let _funcContext_ be [GetTopMostExecutionContext]\(_func_).
-1. If _funcContext_ is **undefined**, return **null**.
+1. If there is no [execution context] in the [execution context stack] whose Function component has value _func_, return **null**.
+1. Let _funcContext_ be the top-most [execution context] in the [execution context stack] whose Function component has value  _func_.
 1. Let _argumentsList_ be the ArgumentsList component of _funcContext_.
 1. If IsSimpleParameterList of _func_.[[FormalParameters]] is **true**, let _callee_ be _func_.
 1. Else, let _callee_ be **undefined**.

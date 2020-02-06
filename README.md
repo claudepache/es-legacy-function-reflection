@@ -2,7 +2,7 @@
 
 ## Status
 
-[ECMAScript proposal](https://github.com/tc39/proposals) at stage 0 of the process.
+[ECMAScript proposal](https://github.com/tc39/proposals) at stage 1 of the process.
 
 * Main author: Claude Pache ([@claudepache](https://github.com/claudepache))
 * Champion: Mark S. Miller ([@erights](https://github.com/erights))

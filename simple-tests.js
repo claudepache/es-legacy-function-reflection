@@ -23,10 +23,11 @@ var listCallers = {
   , getter: '({ get foo() { return getCaller() } }).foo'
   , proxy: '(new Proxy(function () { }, { apply: function() { return getCaller() }}))()'
   , async: '(async function() { return getCaller() })()'
+  , using_call: '(function () { return getCaller.call() })()'
 }
 
-for (var key in listCallers) {
-    var result
+for (let key in listCallers) {
+    let result
     try {
         result = eval(listCallers[key])
     }
@@ -53,11 +54,12 @@ var listSelfProp = {
   , getter: 'Object.getOwnPropertyDescriptor({ get f() { } }, "f").get'
   , proxy: 'new Proxy(function () { }, { })'
   , async: '(async function() { })'
+  , using_call: '(function () { return getCaller.call() })()'
 }
 
 ;['caller', 'arguments'].forEach(function (prop) {
-    for (var key in listSelfProp) {
-        var result
+    for (let key in listSelfProp) {
+        let result
         try {
             result = eval(listSelfProp[key])[prop]
         }

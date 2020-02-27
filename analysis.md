@@ -62,7 +62,8 @@ cross-realm       | ✔︎          | N/A       | N/A       | N/A     | 💥
 ## Value returned by .arguments
 
 When queried on non-censored functions, all implementations return either null (when the function is not in the stack frame),
-or an Arguments object reflecting the actual arguments passed during the function call or constructor invocation.
+or an Arguments object reflecting either the actual arguments passed during the function call or constructor invocation, or the current values of the corresponding parameters; the exact conditions that determines which semantics is chosen remains to be determined (see [Issue 12](https://github.com/claudepache/es-legacy-function-reflection/issues/12)); it seems to be linked with presence of references to the `arguments` binding and, in some cases, the presence of direct `eval`.
+
 This object is distinct from the one available through the `arguments` binding available inside the function, and
 modifications made on that `arguments` binding are not reflected on the returned object. Even, every access to the .arguments property yields a distinct object (so that `(function f() { return f.arguments === f.arguments })()` returns `false`).
 

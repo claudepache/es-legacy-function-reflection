@@ -8,6 +8,9 @@ Many of the results have been obtained through the tests published on
 The missing ones (most notably cross-realm interactions and the returned value of `.arguments`) are left as exercise to the reader.
 (For cross-realm stuff, the author didn’t dare publish the horrible hack he has resorted to in order to obtain a foreign Realm. 🤪)
 
+More complete test coverage is found in [tc39/test262#2514](https://github.com/tc39/test262/pull/2514).
+
+
 
 ## API surface
 

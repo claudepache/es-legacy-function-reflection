@@ -61,3 +61,6 @@ Details are found on [analysis.md](analysis.md). Here is a summary:
 
 [Annex B]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [Forbidden Extensions]: https://tc39.es/ecma262/#sec-forbidden-extensions
+
+## Tests
+* [tc39/test262#2514](https://github.com/tc39/test262/pull/2514)

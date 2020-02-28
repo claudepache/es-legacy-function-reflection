@@ -68,13 +68,24 @@ Each integer-indexed value of that object reflects:
 * (A) either the value of the corresponding argument at the time of invocation,
 * (B) or the current value of the corresponding parameter.
 
-In the most basic cases, semantics (B) is chosen. The implementation switches to semantics (A) in various situations. Here is a non-exhaustive list of them:
-* Firefox 73, Chrome 80, Safari 13: the `arguments` binding is referenced in function code (possibly with exceptions such as `delete arguments`);
-* Chrome 80, Safari 13: the function code triggers a direct eval;
-* Firefox 73, Chrome 80, Safari 13: the corresponding parameter is used in a closure;
-* Chrome 80: the function is executed many times;
-* Safari 13: the developer tools are open.
-* etc.
+In the most basic cases, semantics (B) is chosen. The implementation switches to semantics (A) in various situations; the following table lists some of them:
+
+✔︎ = implementations switches to semantics (A)
+
+case | Firefox 73 | Chrome 80 | Safari 13
+--|--|--|--
+function code references `arguments`, excluding `delete arguments` | ✔︎ | ✔︎ | ✔︎
+function code contains `delete arguments` |  | ✔︎ | ✔︎
+function code contains direct eval |  | ✔︎ | ✔︎
+function code contains `with` statement |  | ✔︎ | ✔︎
+function has a parameter with a default value | ✔︎ | ✔︎ | ✔︎
+function has a rest parameter |   | ✔︎ | ✔︎
+function is invoked as constructor |  | ✔︎ | ✔︎
+the corresponding parameter is used in a closure  | ✔︎ | ✔︎ | ✔︎
+function is called with less or more arguments than expected |  | ✔︎ | 
+function is executed many times |   | ✔︎ | 
+developer tools are open |   |   | ✔︎
+and I bet I missed other funky cases |   | ✔︎ | ✔︎
 
 (See [Issue 12](https://github.com/claudepache/es-legacy-function-reflection/issues/12) for discussion and [arguments-wild.html](arguments-wild.html) for tests.)
 

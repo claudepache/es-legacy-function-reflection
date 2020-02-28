@@ -1,0 +1,123 @@
+<!doctype html>
+<!-- see Issue #12 -->
+<head>
+<title>Some tests against wild semantics of .arguments in current implementations</title>
+
+<script>
+function run() {
+
+    function print(x) {
+        document.getElementById('output').appendChild(document.createTextNode(x + '\n'));
+    }
+
+
+    function assertEq(a, b, msg) {
+        if (!Object.is(a, b))
+            throw new EvalError(`Expected ${b} got ${a} ${msg || ''}`);
+    }
+
+    function test(name, f) {
+        print(`------ ${name}`);
+        try {
+            f();
+            print(`passed!`);
+        }
+        catch (e) {
+            print(e);
+        }
+        print('');
+    }
+
+
+    // - Modifies a parameter.
+    // - Doesn't explicitly refer to the implicit `arguments` binding.
+    test('f1', _ => {
+        function f1(a) {
+            assertEq(f1.arguments[0], 0);
+            a = 1;
+            assertEq(f1.arguments[0], 0);
+        }
+        f1(0);
+    })
+
+
+
+    // - Modifies a parameter.
+    // - Explicitly refers to the implicit `arguments` binding.
+    test('f2', _ => {
+        function f2(a) {
+            assertEq(f2.arguments[0], 0);
+            assertEq(arguments[0], 0);
+            a = 1
+            assertEq(f2.arguments[0], 0);
+            assertEq(arguments[0], 1);
+        }
+        f2(0);
+    });
+
+
+
+    // - Modifies a parameter.
+    // - Doesn't explicitly refer to the implicit `arguments` binding.
+    // - Contains direct eval.
+    test('f3', _ => {
+        function f3(a) {
+            eval("");
+            assertEq(f3.arguments[0], 0);
+            a = 1
+            assertEq(f3.arguments[0], 0);
+        }
+        f3(0);
+    });
+
+
+
+    // - Modifies a parameter.
+    // - Doesn't explicitly refer to the implicit `arguments` binding.
+    // - The modified parameter is closed over.
+    test('f4', _ => {
+        function f4(a) {
+            assertEq(f4.arguments[0], 0);
+            a = 1;
+            assertEq(f4.arguments[0], 0);
+            return () => a;
+        }
+        f4(0);
+    })
+
+
+
+
+    // - Modifies a parameter.
+    // - Doesn't explicitly refer to the implicit `arguments` binding.
+    // - Repeat many times.
+    test('f5', _ => {
+        var expected = (function g(a) {
+             a = 1;
+             return g.arguments[0];
+        })(0);
+        function f5(a, expected) {
+            a = 1;
+            assertEq(f5.arguments[0], expected, `at iteration ${i}`)
+        }
+        print(`Will expect ${expected}`)
+        for (var i = 0; i < 1e6; ++i) {
+            f5(0, expected);
+        }
+    })
+
+}
+</script>
+
+<body>
+<p>These tests check whether <code>f.arguments[i]</code> reflects the original value
+of the <var>i</var>-th argument as it was passed to <var>f</var>, in various settings.
+
+<p>See Issue #12 on the Github repo.
+
+
+<p><button onclick="run()">Run the tests</button>
+
+<hr>
+
+<p><output id="output" style="display: block; white-space:pre"></output>

@@ -101,12 +101,14 @@ When the purported caller falls in several categories (e.g. strict non-construct
 
 type of the purported caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|-----------
-non-ECMAScript    | ⛔        | ⛔         | ⛔       | ✔︎ 👎    | ⛔
+non-ECMAScript    | ⛔        | skipped(\*)| ⛔       | ✔︎ 👎    | ⛔
 strict            | 💥        | ⛔         | 💥       | 💥      | ⛔
 generator/async   | ✔︎         | ✔︎          | 💥        | ✔︎       | ⛔
 non-constructor   | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎
 legacy            | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎
 cross-realm       | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ⛔
+
+(\*) When the caller is a built-in function, the caller of the caller is returned.
 
 In the proposed spec, we purposefully remove any potential way to distinguish between non-ECMAScript functions, strict functions, and cross-realm functions.
 

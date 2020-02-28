@@ -29,9 +29,10 @@ function run() {
     }
 
 
-    // - Modifies a parameter.
-    // - Doesn't explicitly refer to the implicit `arguments` binding.
     test('f1', _ => {
+        print("- Modifies a parameter.");
+        print("- Doesn't explicitly refer to the implicit `arguments` binding.");
+        print("Testing whether f1.arguments[0] reflects the original value.");
         function f1(a) {
             assertEq(f1.arguments[0], 0);
             a = 1;
@@ -42,9 +43,11 @@ function run() {
 
 
 
-    // - Modifies a parameter.
-    // - Explicitly refers to the implicit `arguments` binding.
+
     test('f2', _ => {
+        print("- Modifies a parameter.");
+        print("- Explicitly refers to the implicit `arguments` binding.")
+        print("Testing whether f2.arguments[0] reflects the original value.");
         function f2(a) {
             assertEq(f2.arguments[0], 0);
             assertEq(arguments[0], 0);
@@ -57,10 +60,11 @@ function run() {
 
 
 
-    // - Modifies a parameter.
-    // - Doesn't explicitly refer to the implicit `arguments` binding.
-    // - Contains direct eval.
     test('f3', _ => {
+        print("- Modifies a parameter.");
+        print("- Doesn't explicitly refer to the implicit `arguments` binding.");
+        print("- Contains direct eval.");
+        print("Testing whether f3.arguments[0] reflects the original value.");
         function f3(a) {
             eval("");
             assertEq(f3.arguments[0], 0);
@@ -72,10 +76,11 @@ function run() {
 
 
 
-    // - Modifies a parameter.
-    // - Doesn't explicitly refer to the implicit `arguments` binding.
-    // - The modified parameter is closed over.
     test('f4', _ => {
+        print("- Modifies a parameter.");
+        print("- Doesn't explicitly refer to the implicit `arguments` binding.");
+        print("- The modified parameter is closed over.");
+        print("Testing whether f4.arguments[0] reflects the original value.");
         function f4(a) {
             assertEq(f4.arguments[0], 0);
             a = 1;
@@ -88,22 +93,71 @@ function run() {
 
 
 
-    // - Modifies a parameter.
-    // - Doesn't explicitly refer to the implicit `arguments` binding.
-    // - Repeat many times.
-    test('f5', _ => {
+
+    test('f1-var', _ => {
+        print("- Modifies a parameter.");
+        print("- Doesn't explicitly refer to the implicit `arguments` binding.");
+        print("Testing whether the result remains consistent after many executions.");
         var expected = (function g(a) {
              a = 1;
              return g.arguments[0];
         })(0);
-        function f5(a, expected) {
+        function f1(a, expected) {
             a = 1;
-            assertEq(f5.arguments[0], expected, `at iteration ${i}`)
+            assertEq(f1.arguments[0], expected, `at iteration ${i}`)
         }
         print(`Will expect ${expected}`)
         for (var i = 0; i < 1e6; ++i) {
-            f5(0, expected);
+            f1(0, expected);
         }
+    })
+
+
+
+    test('f2-var', _ => {
+        print("- Modifies a parameter.");
+        print("- Explicitly refers to the implicit `arguments[0]` binding.");
+        print("- Do not explicitly refers to the implicit `arguments[1]` binding.");
+        print("Testing whether the semantics is the same for arguments[0] and arguments[1].");
+        function f2(a, b) {
+            assertEq(f2.arguments[0], 0);
+            assertEq(f2.arguments[1], 0);
+            assertEq(arguments[0], 0);
+            a = 1;
+            b = 1;
+            assertEq(f2.arguments[1], f2.arguments[0]);
+        }
+        f2(0, 0);
+    });
+
+
+    test('f3-var', _ => {
+        var b;
+        print("- Modifies a parameter.");
+        print("- Doesn't explicitly refer to the implicit `arguments` binding.");
+        print("- Contains direct eval with a non-static string and side-effect.");
+        function f3(a) {
+            eval(`b = ${ Math.random() };`);
+            assertEq(f3.arguments[0], 0);
+            a = 1
+            assertEq(f3.arguments[0], 0);
+        }
+        f3(0);
+    });
+
+
+    test('f4-var', _ => {
+        print("- Modifies a parameter.");
+        print("- Doesn't explicitly refer to the implicit `arguments` binding.");
+        print("- The modified parameter is closed over.");
+        print("Testing whether the semantics is the same for arguments[0] and arguments[1].");
+        function f4(a, b) {
+            a = 1;
+            b = 1;
+            assertEq(f4.arguments[1], f4.arguments[0]);
+            return () => a;
+        }
+        f4(0, 0);
     })
 
 }

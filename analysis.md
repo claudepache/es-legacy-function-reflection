@@ -101,7 +101,7 @@ When the purported caller falls in several categories (e.g. strict non-construct
 
 type of the purported caller | Firefox 71 | Chrome 79 | Safari 13 | Edge 18 | Proposed spec
 ------------------|------------|-----------|-----------|---------|-----------
-non-ECMAScript    | ⛔        | skipped(\*)| ⛔       | ✔︎ 👎    | ⛔
+non-ECMAScript    | skipped(\*)|⛔        |  ⛔       | ✔︎ 👎    | ⛔
 strict            | 💥        | ⛔         | 💥       | 💥      | ⛔
 generator/async   | ✔︎         | ✔︎          | 💥        | ✔︎       | ⛔
 non-constructor   | ✔︎         | ✔︎          | ✔︎         | ✔︎       | ✔︎

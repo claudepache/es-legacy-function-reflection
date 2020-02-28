@@ -68,12 +68,13 @@ Each integer-indexed value of that object reflects:
 * (A) either the value of the corresponding argument at the time of invocation,
 * (B) or the current value of the corresponding parameter.
 
-In the most basic cases, semantics (B) is chosen. The implementation switches to semantics (A) if any of the following condition is satifsied:
-* Firefox 73, Chrome 80, Safari 13: there is a reference to the `arguments` binding in the function code;
+In the most basic cases, semantics (B) is chosen. The implementation switches to semantics (A) in various situations. Here is a non-exhaustive list of them:
+* Firefox 73, Chrome 80, Safari 13: the `arguments` binding is referenced in function code (possibly with exceptions such as `delete arguments`);
 * Chrome 80, Safari 13: the function code triggers a direct eval;
 * Firefox 73, Chrome 80, Safari 13: the corresponding parameter is used in a closure;
 * Chrome 80: the function is executed many times;
 * Safari 13: the developer tools are open.
+* etc.
 
 (See [Issue 12](https://github.com/claudepache/es-legacy-function-reflection/issues/12) for discussion and [arguments-wild.html](arguments-wild.html) for tests.)
 

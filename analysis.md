@@ -87,7 +87,7 @@ function is executed many times |   | ✔︎ |
 developer tools are open |   |   | ✔︎
 and I bet I missed other funky cases |   | ✔︎ | ✔︎
 
-(See [Issue 12](https://github.com/claudepache/es-legacy-function-reflection/issues/12) for discussion and [arguments-wild.html](arguments-wild.html) for tests.)
+(See [Issue 12](https://github.com/claudepache/es-legacy-function-reflection/issues/12) for discussion and [tests-arguments-wild.html](tests-arguments-wild.html) for tests.)
 
 This object is distinct from the one available through the `arguments` binding available inside the function, and
 modifications made on that `arguments` binding are not reflected on the returned object. Even, every access to the .arguments property yields a distinct object (so that `(function f() { return f.arguments === f.arguments })()` returns `false`).
